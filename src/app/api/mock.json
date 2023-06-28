@@ -1,0 +1,53 @@
+[
+  [
+    {
+      "activity name": "Walking Tour of Gothic Quarter",
+      "duration": "09:00-13:00",
+      "address": "Carrer de Fernández y González, 7, 08002 Barcelona,"
+    },
+    {
+      "activity name": "Visit Sagrada Familia",
+      "duration": "13:00-17:00",
+      "address": "Carrer de Mallorca, 401, 08013 Barcelona,"
+    },
+    {
+      "activity name": "Tibidabo Amusement Park",
+      "duration": "17:00-22:00",
+      "address": "Travessera de Dalt, s/n, 08035 Barcelona,"
+    }
+  ],
+  [
+    {
+      "activity name": "FC Barcelona Guided Tour",
+      "duration": "09:00-13:00",
+      "address": "Avinguda Joan Gaspart, 77, 08018 Barcelona,"
+    },
+    {
+      "activity name": "La Boqueria Market",
+      "duration": "13:00-17:00",
+      "address": "La Rambla, 91, 08002 Barcelona,"
+    },
+    {
+      "activity name": "Picnic At Park de la Ciutadella",
+      "duration": "17:00-20:00",
+      "address": "Passeig de Pujades, 1, 08003 Barcelona,"
+    }
+  ],
+  [
+    {
+      "activity name": "Barcelona Aquarium",
+      "duration": "10:00-13:00",
+      "address": "Moll d’Espanya del Port Vell, S/N, 08039 Barcelona,"
+    },
+    {
+      "activity name": "Santa Maria del Mar Cathedral",
+      "duration": "13:00-17:00",
+      "address": "Plaça de Santa Maria, 1, 08003 Barcelona,"
+    },
+    {
+      "activity name": "La Barceloneta Beach",
+      "duration": "17:00-22:00",
+      "address": "Moll de Gregal, 08003 Barcelona,"
+    }
+  ]
+]
