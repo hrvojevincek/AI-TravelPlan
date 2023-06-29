@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useDataContext } from "../dataContext";
-import { ResultData } from "@/types";
+import { Activity, ResultData } from "@/types";
 import Map from "../api/Map";
 import ExactLocation from "../api/ExactLocation";
 import mock from "../api/mock.json";
@@ -18,7 +18,7 @@ function ResultsPage() {
       `/api/search?destination=${data?.destination}&duration=${data?.duration}`,
       { headers: { "Content-Type": "application/json" } }
     );
-    console.log(result);
+    console.log("ESTOY AQUI====>", result);
     const responseData = await result.json();
     console.log(responseData);
     setResult(responseData);
@@ -29,7 +29,7 @@ function ResultsPage() {
   }, []);
 
   return (
-    <>
+    <div className="flex">
       <div className="max-w-2xl p-6 bg-white border border-gray-200 shadow mb-2 rounded-xl">
         {result.map((data, i) => {
           return (
@@ -53,13 +53,17 @@ function ResultsPage() {
         })}
       </div>
       <div className="flex-grow">
-        <Map
-          activities={mock.reduce((acc, day) => {
-            return [...acc, ...day];
-          }, [])}
-        />
+        {result.length > 0 ? (
+          <Map
+            activities={result.reduce((acc, day) => {
+              return [...acc, ...day];
+            }, [])}
+          />
+        ) : (
+          <div />
+        )}
       </div>
-    </>
+    </div>
   );
 }
 

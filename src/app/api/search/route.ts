@@ -11,4 +11,7 @@ export async function GET(request: Request) {
     console.log(response, "WE ARE IDIOTS");
     return NextResponse.json(response);
   }
+  // else {
+  // //   return NextResponse.json([]);
+  // // }
 }
