@@ -1,48 +1,69 @@
-import mock from './mock.json'
+import { ResultData } from "@/types";
+import mock from "./mock.json";
+import prisma from "@/bd";
 
 type GPTClientStrategy = {
-  predict(input: string): Promise<string>
-}
+  predict: (props: searchProps) => Promise<ResultData>;
+};
+
+type searchProps = {
+  destination: string;
+  duration: string;
+};
 
 class MockGPTStrategy implements GPTClientStrategy {
-  async predict(): Promise<any> {
+  async predict({ destination, duration }: searchProps): Promise<any> {
     // Return your mock data here
-    return mock
+    const search = await prisma.search.findUnique({
+      where: {
+        destinationDuration: {
+          destination: destination.toLowerCase(),
+          duration: parseInt(duration),
+        },
+      },
+    });
+    if (search?.response) {
+      const data = JSON.parse(search?.response);
+      console.log(data, "CLIENT");
+      return data;
+    }
   }
 }
 
 class RealGPTStrategy implements GPTClientStrategy {
-  async predict(): Promise<string> {
+  async predict(input: searchProps): Promise<string> {
     // Here goes the real call to the GPT API
     // Let's suppose you have a function called requestToGptApi(input: string) that makes the real request
 
     // TODO: implement
-    return Promise.resolve('TODO')
+    return Promise.resolve("TODO");
   }
 }
 
 class GPTClient {
-  private strategy: GPTClientStrategy
+  private strategy: GPTClientStrategy;
 
   constructor(strategy: GPTClientStrategy) {
-    this.strategy = strategy
+    this.strategy = strategy;
   }
 
   setStrategy(strategy: GPTClientStrategy) {
-    this.strategy = strategy
+    this.strategy = strategy;
   }
 
-  async predict(input: string): Promise<string> {
-    return this.strategy.predict(input)
+  async predict(input: searchProps) {
+    return this.strategy.predict(input);
   }
 }
 
 // Now you can create the client with the appropriate strategy
-let strategy: GPTClientStrategy
-if (process.env.NODE_ENV === 'development') {
-  strategy = new MockGPTStrategy()
+let strategy: GPTClientStrategy;
+if (process.env.NODE_ENV === "development") {
+  strategy = new MockGPTStrategy();
 } else {
-  strategy = new RealGPTStrategy()
+  strategy = new RealGPTStrategy();
 }
 
-export default new GPTClient(strategy)
+const client = new GPTClient(strategy);
+
+export default client;

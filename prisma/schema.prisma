@@ -10,9 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Profile {
   id     Int     @id @default(autoincrement())
   bio    String?
   userId Int     @unique
+}
+
+model Search {
+  destination String
+  duration    Int
+  response    String
+
+  @@id([destination, duration], name: "destinationDuration")
 }

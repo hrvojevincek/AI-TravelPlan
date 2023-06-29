@@ -2,12 +2,16 @@
   "name": "travelplan",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node prisma/seed.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --ext .js,.ts .",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@prisma/client": "4.16.1",
@@ -33,6 +37,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.8",
-    "prisma": "^4.16.1"
+    "prisma": "^4.16.1",
+    "ts-node": "^10.9.1"
   }
 }
