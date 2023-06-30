@@ -10,16 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  userId Int     @unique
+model User {
+  id       Int            @id @default(autoincrement())
+  username String         @unique
+  email    String         @unique
+  password String
+  searches UserToSearch[]
 }
 
 model Search {
+  id          Int            @id @default(autoincrement())
   destination String
   duration    Int
   response    String
+  users       UserToSearch[]
+}
 
-  @@id([destination, duration], name: "destinationDuration")
+model UserToSearch {
+  searchId Int
+  userId   Int
+  saved    Boolean
+  search   Search  @relation(fields: [searchId], references: [id])
+  user     User    @relation(fields: [userId], references: [id])
+
+  @@id([userId, searchId])
 }
