@@ -32,12 +32,10 @@ class RealGPTStrategy implements GPTClientStrategy {
   // TODO change to real strategy
   async predict({ destination, duration }: searchProps): Promise<any> {
     // Return your mock data here
-    const search = await prisma.search.findUnique({
+    const search = await prisma.search.findFirst({
       where: {
-        destinationDuration: {
           destination: destination.toLowerCase(),
           duration: parseInt(duration),
-        },
       },
     });
     if (search?.response) {
