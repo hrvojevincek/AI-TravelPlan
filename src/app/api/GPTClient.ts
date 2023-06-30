@@ -14,12 +14,10 @@ type searchProps = {
 class MockGPTStrategy implements GPTClientStrategy {
   async predict({ destination, duration }: searchProps): Promise<any> {
     // Return your mock data here
-    const search = await prisma.search.findUnique({
+    const search = await prisma.search.findFirst({
       where: {
-        destinationDuration: {
           destination: destination.toLowerCase(),
           duration: parseInt(duration),
-        },
       },
     });
     if (search?.response) {
