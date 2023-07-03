@@ -1,12 +1,10 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDataContext } from "../dataContext";
-import { Activity, ResultData } from "@/types";
+import { ResultData } from "@/types";
 import Map from "../api/Map";
 import ExactLocation from "../api/ExactLocation";
-import mock from "../api/mock.json";
-import { setRequestMeta } from "next/dist/server/request-meta";
 
 function ResultsPage() {
   const { data } = useDataContext();
@@ -18,7 +16,6 @@ function ResultsPage() {
       `/api/search?destination=${data?.destination}&duration=${data?.duration}`,
       { headers: { "Content-Type": "application/json" } }
     );
-    console.log("ESTOY AQUI====>", result);
     const responseData = await result.json();
     console.log(responseData);
     setResult(responseData);

@@ -1,6 +1,11 @@
 import { ResultData } from "@/types";
-import mock from "./mock.json";
 import prisma from "@/bd";
+import { Configuration, OpenAIApi } from "openai";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -14,12 +19,10 @@ type searchProps = {
 class MockGPTStrategy implements GPTClientStrategy {
   async predict({ destination, duration }: searchProps): Promise<any> {
     // Return your mock data here
-    const search = await prisma.search.findUnique({
+    const search = await prisma.search.findFirst({
       where: {
-        destinationDuration: {
-          destination: destination.toLowerCase(),
-          duration: parseInt(duration),
-        },
+        destination: destination.toLowerCase(),
+        duration: parseInt(duration),
       },
     });
     if (search?.response) {
@@ -27,16 +30,38 @@ class MockGPTStrategy implements GPTClientStrategy {
       console.log(data, "CLIENT");
       return data;
     }
+    // if (userInfo) connect to user table
+
+    const response = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: "say hello",
+      temperature: 0,
+      max_tokens: 849,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    //if (userInfo) connect to user table
+    console.log(response.data);
+
+    return JSON.parse("response.choices[0].text");
   }
 }
 
 class RealGPTStrategy implements GPTClientStrategy {
-  async predict(input: searchProps): Promise<string> {
-    // Here goes the real call to the GPT API
-    // Let's suppose you have a function called requestToGptApi(input: string) that makes the real request
-
-    // TODO: implement
-    return Promise.resolve("TODO");
+  // TODO change to real strategy
+  async predict({ destination, duration }: searchProps): Promise<any> {
+    // Return your mock data here
+    const search = await prisma.search.findFirst({
+      where: {
+        destination: destination.toLowerCase(),
+        duration: parseInt(duration),
+      },
+    });
+    if (search?.response) {
+      const data = JSON.parse(search?.response);
+      return data;
+    }
   }
 }
 

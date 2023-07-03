@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { SearchData } from '@/types';
-import React, { useState, useContext, ReactNode } from 'react';
+import { SearchData } from "@/types";
+import React, { useState, useContext, ReactNode } from "react";
 
 type DataContextType = {
   data: SearchData | null;
@@ -15,7 +15,7 @@ type Props = {
 const initialContextState: DataContextType = {
   data: null,
   setData: () => {
-    console.warn('setUser function not yet provided');
+    console.warn("setUser function not yet provided");
   },
 };
 
