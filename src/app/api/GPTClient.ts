@@ -1,6 +1,11 @@
 import { ResultData } from "@/types";
-import mock from "./mock.json";
 import prisma from "@/bd";
+import { Configuration, OpenAIApi } from "openai";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -16,8 +21,8 @@ class MockGPTStrategy implements GPTClientStrategy {
     // Return your mock data here
     const search = await prisma.search.findFirst({
       where: {
-          destination: destination.toLowerCase(),
-          duration: parseInt(duration),
+        destination: destination.toLowerCase(),
+        duration: parseInt(duration),
       },
     });
     if (search?.response) {
@@ -25,6 +30,21 @@ class MockGPTStrategy implements GPTClientStrategy {
       console.log(data, "CLIENT");
       return data;
     }
+    // if (userInfo) connect to user table
+
+    const response = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: "say hello",
+      temperature: 0,
+      max_tokens: 849,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    //if (userInfo) connect to user table
+    console.log(response.data);
+
+    return JSON.parse("response.choices[0].text");
   }
 }
 
@@ -34,13 +54,12 @@ class RealGPTStrategy implements GPTClientStrategy {
     // Return your mock data here
     const search = await prisma.search.findFirst({
       where: {
-          destination: destination.toLowerCase(),
-          duration: parseInt(duration),
+        destination: destination.toLowerCase(),
+        duration: parseInt(duration),
       },
     });
     if (search?.response) {
       const data = JSON.parse(search?.response);
-      console.log(data, "CLIENT");
       return data;
     }
   }

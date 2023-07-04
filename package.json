@@ -6,6 +6,7 @@
     "seed": "ts-node prisma/seed.js"
   },
   "scripts": {
+    "predev": "docker-compose up -d",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
@@ -24,6 +25,8 @@
     "dotenv": "^16.3.1",
     "eslint-config-next": "13.4.7",
     "next": "13.4.7",
+    "next-auth": "^4.22.1",
+    "openai": "^3.3.0",
     "postcss": "8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",

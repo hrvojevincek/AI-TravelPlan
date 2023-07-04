@@ -1,5 +1,6 @@
 import React from "react";
 
+
 function Video() {
   const videoId = "EColTNIbOko";
   const onPlayerReady = (event: any) => {
@@ -38,7 +39,7 @@ function Video() {
         />
       </div>
 
-      <style jsx>{`
+      <style>{`
         body {
           margin: 0;
           padding: 0;

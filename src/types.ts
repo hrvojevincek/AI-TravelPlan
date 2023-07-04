@@ -16,3 +16,9 @@ export type Activity = {
 export type ExactLocationProps = {
   address: string;
 };
+
+export type User = {
+  username: string,
+  email: string,
+  image?: string,
+}

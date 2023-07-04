@@ -1,38 +1,20 @@
 "use client";
 
-import { ResultData, SearchData } from "@/types";
-import { useEffect, useState } from "react";
+import { SearchData } from "@/types";
 import { useDataContext } from "./dataContext";
-// import { useRouter } from 'next/router';
 import Link from "next/link";
-// import VideoPlayer from "./components/VideoPlayer";
-import { default as Video } from "./components/Video";
+import Button from "./components/Button";
+import { UserCard } from "./UserCard";
+import { useSession } from "next-auth/react"
+import  Video from "./components/Video";
 
 export default function Home() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: session } = useSession();
   const { setData } = useDataContext();
-  // const videos = ["video1.mp4", "video2.mp4", "video3.mp4"];
-  // const [video, setVideo] = useState(0);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setVideo((prev) => (prev + 1) % videos.length);
-  //   }, 3000);
-
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, [video, videos.length]);
-
-  // const currVideo = videos[video];
-  // const videoSrc = `/videos/${currVideo}`;
-  // const router = useRouter()
 
   return (
-    <>
-      {/* <Video /> */}
+    <>     
       <Video />
-      {/* <VideoPlayer src={videoSrc} /> */}
       <div className="flex flex-col md:flex-row top-0 absolute h-screen w-screen">
         <div className="h-screen flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <h2 className="mt-3 mb-10 text-center text-5xl font-bold leading-9 tracking-tight text-white">
@@ -98,28 +80,23 @@ export default function Home() {
                 </div>
               </div>
 
-              <div>
+              <div className="bg-black text-white">              
                 <Link href="/result">
                   <button
                     // href="/result"
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300"
                   >
-                    Plan my trip :)
+                    Plan my trip
                   </button>
                 </Link>
               </div>
             </form>
 
-            <p className="mt-8 text-center text-sm text-gray-500">
-              Not a member?{" "}
-              <a
-                href="#"
-                className="font-semibold leading-6 text-indigo- hover:text-indigo-500"
-              >
-                Sign In
-              </a>
-            </p>
+            <div className="bg-white">
+              <Button />
+              {session && <UserCard user={session?.user} />}
+            </div>
           </div>
         </div>
       </div>
