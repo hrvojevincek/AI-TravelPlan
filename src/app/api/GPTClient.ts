@@ -21,8 +21,11 @@ class MockGPTStrategy implements GPTClientStrategy {
     // Return your mock data here
     const search = await prisma.search.findFirst({
       where: {
+<<<<<<< HEAD
         destination: destination.toLowerCase(),
         duration: parseInt(duration),
+=======
+ >>>>>>> main
       },
     });
     if (search?.response) {
@@ -54,12 +57,17 @@ class RealGPTStrategy implements GPTClientStrategy {
     // Return your mock data here
     const search = await prisma.search.findFirst({
       where: {
+<<<<<<< HEAD
         destination: destination.toLowerCase(),
         duration: parseInt(duration),
+=======n
       },
     });
     if (search?.response) {
       const data = JSON.parse(search?.response);
+<<<<<<< HEAD
+=======
+     
       return data;
     }
   }

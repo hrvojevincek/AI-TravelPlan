@@ -1,7 +1,10 @@
 import React from "react";
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> main
 function Video() {
   const videoId = "EColTNIbOko";
   const onPlayerReady = (event: any) => {
@@ -40,7 +43,9 @@ function Video() {
         />
       </div>
 
+<<<<<<< HEAD
       <style>{`
+n
         body {
           margin: 0;
           padding: 0;
