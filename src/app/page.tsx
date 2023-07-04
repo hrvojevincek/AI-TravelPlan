@@ -1,5 +1,5 @@
 "use client";
-<<<<<<< HEAD
+
 import { SearchData } from "@/types";
 import { useDataContext } from "./dataContext";
 import Link from "next/link";
@@ -7,41 +7,15 @@ import { default as Video } from "./components/Video";
 import Button from "./components/Button";
 import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react"
-import { default as Video } from "./components/Video";
+import  Video from "./components/Video";
 
 export default function Home() {
   const { data: session } = useSession();
-
   const { setData } = useDataContext();
-<<<<<<< HEAD
 
   return (
-    <>
+    <>     
       <Video />
-=======
-  // const videos = ["video1.mp4", "video2.mp4", "video3.mp4"];
-  // const [video, setVideo] = useState(0);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setVideo((prev) => (prev + 1) % videos.length);
-  //   }, 3000);
-
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, [video, videos.length]);
-
-  // const currVideo = videos[video];
-  // const videoSrc = `/videos/${currVideo}`;
-  // const router = useRouter()
-
-  return (
-    <>
-      {/* <Video /> */}
-      <Video />
-      {/* <VideoPlayer src={videoSrc} /> */}
->>>>>>> main
       <div className="flex flex-col md:flex-row top-0 absolute h-screen w-screen">
         <div className="h-screen flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <h2 className="mt-3 mb-10 text-center text-5xl font-bold leading-9 tracking-tight text-white">
@@ -107,23 +81,19 @@ export default function Home() {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              <div className="bg-black text-white">
-=======
-              
+              <div className="bg-black text-white">              
                 <Link href="/result">
                   <button
                     // href="/result"
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300"
                   >
-<<<<<<< HEAD
                     Plan my trip
                   </button>
                 </Link>
               </div>
             </form>
-<<<<<<< HEAD
+
             <div className="bg-white">
               <Button />
               {session && <UserCard user={session?.user} />}
