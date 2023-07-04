@@ -1,19 +1,19 @@
 "use client";
-
 import { SearchData } from "@/types";
 import { useDataContext } from "./dataContext";
 import Link from "next/link";
+import { default as Video } from "./components/Video";
 import Button from "./components/Button";
 import { UserCard } from "./UserCard";
-import { useSession } from "next-auth/react"
-import  Video from "./components/Video";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const { data: session } = useSession();
+
   const { setData } = useDataContext();
 
   return (
-    <>     
+    <>
       <Video />
       <div className="flex flex-col md:flex-row top-0 absolute h-screen w-screen">
         <div className="h-screen flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -80,7 +80,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-black text-white">              
+              <div className="bg-black text-white">
                 <Link href="/result">
                   <button
                     // href="/result"
@@ -92,7 +92,6 @@ export default function Home() {
                 </Link>
               </div>
             </form>
-
             <div className="bg-white">
               <Button />
               {session && <UserCard user={session?.user} />}

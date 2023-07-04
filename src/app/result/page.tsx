@@ -17,7 +17,6 @@ function ResultsPage() {
       { headers: { "Content-Type": "application/json" } }
     );
     const responseData = await result.json();
-    console.log(responseData);
     setResult(responseData);
   }
 
