@@ -1,11 +1,6 @@
 import { ResultData } from "@/types";
-import prisma from "@/bd";
-import { Configuration, OpenAIApi } from "openai";
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+import prisma from "../../../db";
+import openai from "../../../openai";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -27,24 +22,29 @@ class MockGPTStrategy implements GPTClientStrategy {
     });
     if (search?.response) {
       const data = JSON.parse(search?.response);
-      console.log(data, "CLIENT");
       return data;
     }
-    // if (userInfo) connect to user table
 
+    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
+    // if (userInfo) connect to user table
+    //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: "say hello",
+      prompt: prompt,
       temperature: 0,
-      max_tokens: 849,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
+      max_tokens: 800,
     });
     //if (userInfo) connect to user table
-    console.log(response.data);
-
-    return JSON.parse("response.choices[0].text");
+    if (response.data.choices[0].text !== undefined) {
+      const savedSearch = await prisma.search.create({
+        data: {
+          duration: parseInt(duration),
+          destination: destination.toLowerCase(),
+          response: response.data.choices[0].text,
+        },
+      });
+      return JSON.parse(response.data.choices[0].text);
+    }
   }
 }
 
