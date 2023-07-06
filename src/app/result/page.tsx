@@ -53,7 +53,6 @@ function ResultsPage() {
                       activityIndex={index}
                       dayIndex={i}
                       result={result}
-                      setResult={setResult}
                     />
 
                     <ExactLocation address={activity.address} />

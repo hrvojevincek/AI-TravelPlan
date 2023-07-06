@@ -40,7 +40,6 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
     const changeResult = await fetch(
       `/api/activity?duration=${duration}&destination=${destination}`,
       requestOptions
-
     );
     const responseData = await changeResult.json();
     const parsedData = JSON.parse(responseData);
@@ -67,7 +66,6 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
   return (
     <button
       className="text-white bg-black font-semi py-1 px-2 rounded"
-
       onClick={activity}
     >
       Change this activity!
