@@ -10,7 +10,7 @@ export type ResultData = Day[];
 export type Day = Activity[];
 
 export type Activity = {
-  'activity name': string;
+  "activity name": string;
   duration: string;
   address: string;
 };

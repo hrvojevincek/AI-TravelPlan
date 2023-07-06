@@ -1,6 +1,6 @@
-import { ResultData, ResultEdit } from '@/types';
-import prisma from '../../../db';
-import openai from '../../../openai';
+import { ResultData, ResultEdit } from "@/types";
+import prisma from "../../../db";
+import openai from "../../../openai";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -55,9 +55,9 @@ class MockGPTStrategy implements GPTClientStrategy {
     // if (userInfo) connect to user table
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
-      model: 'text-davinci-003',
+      model: "text-davinci-003",
       prompt: prompt,
-      temperature: 1,
+      temperature: 0,
       max_tokens: 800,
     });
     //if (userInfo) connect to user table
@@ -69,25 +69,23 @@ class MockGPTStrategy implements GPTClientStrategy {
           response: response.data.choices[0].text,
         },
       });
+      console.log(response.data.choices[0].text);
       return JSON.parse(response.data.choices[0].text);
     }
   }
 
   async edit({ activityName, duration }: editProps): Promise<any> {
     try {
-      const prompt = `suggest me another ${activityName} with ${duration} in response like this: {
-    "activity name": "name",
-    duration: "24hour format",
-    address: "address"}`;
+      const prompt = `suggest me another activity instead of ${activityName} in the same city with duration ${duration}. response should be in json format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line like this: [{"activity name": answer, "duration": answer(24 hour format-24 hour format), address: answer}]`;
 
       const response = await openai.createCompletion({
-        model: 'text-davinci-003',
+        model: "text-davinci-003",
         prompt: prompt,
-        temperature: 1,
+        temperature: 0,
         max_tokens: 350,
       });
       if (response.data.choices[0].text) {
-        return JSON.parse(response.data.choices[0].text);
+        return response.data.choices[0].text;
       }
     } catch (error) {
       console.error(error);
@@ -115,11 +113,11 @@ class RealGPTStrategy implements GPTClientStrategy {
     try {
       const prompt = `suggest me another ${activityName} with ${duration} in response like this: {
     "activity name": "name",
-    duration: "24hour format",
+"duration": answer(24 hour format-24 hour format)
     address: "address"}`;
 
       const response = await openai.createCompletion({
-        model: 'text-davinci-003',
+        model: "text-davinci-003",
         prompt: prompt,
         temperature: 1,
         max_tokens: 350,
@@ -136,7 +134,7 @@ class RealGPTStrategy implements GPTClientStrategy {
 // Now you can create the client with the appropriate strategy
 let strategy: GPTClientStrategy;
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   strategy = new MockGPTStrategy();
 } else {
   strategy = new RealGPTStrategy();

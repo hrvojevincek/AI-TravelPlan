@@ -10,6 +10,9 @@ import ChangeMeBtn from "../components/ChangeMeBtn";
 function ResultsPage() {
   const { data } = useDataContext();
   const [result, setResult] = useState<ResultData>([]);
+  let tryResult: any;
+
+  console.log("WHAT ARE YOU HERE", typeof setResult);
 
   async function search() {
     const result = await fetch(
@@ -18,6 +21,7 @@ function ResultsPage() {
     );
     const responseData = await result.json();
     setResult(responseData);
+    tryResult = responseData;
   }
 
   useEffect(() => {
@@ -43,9 +47,11 @@ function ResultsPage() {
                     <div>{activity["activity name"]}</div>
                     <div>{activity.duration}</div>
                     <ChangeMeBtn
+                      setResult={setResult}
                       duration={activity.duration}
                       activityName={activity["activity name"]}
-                      index={index}
+                      activityIndex={index}
+                      dayIndex={i}
                     />
 
                     <ExactLocation address={activity.address} />
