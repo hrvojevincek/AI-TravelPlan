@@ -5,10 +5,10 @@ import { useDataContext } from "../dataContext";
 import { ResultData } from "@/types";
 import Map from "../api/Map";
 import ExactLocation from "../api/ExactLocation";
-import ChangeMeBtn from "../components/ChangeMeBtn";
 
 function ResultsPage() {
   const { data } = useDataContext();
+
   const [result, setResult] = useState<ResultData>([]);
 
   async function search() {
@@ -36,18 +36,10 @@ function ResultsPage() {
               <h1 className="font-bold text-xl">Day {i + 1}</h1>
               {data.map((activity, index) => {
                 return (
-                  <div
-                    className="`bg-${color}`-200"
-                    key={`result-${i}-day-${index}`}
-                  >
+                  <div key={`result-${i}-day-${index}`}>
                     <div>{activity["activity name"]}</div>
                     <div>{activity.duration}</div>
-                    <ChangeMeBtn
-                      index={index}
-                      duration={activity.duration}
-                      activityName={activity["activity name"]}
-                    />
-
+                    {/* <div>{activity.address}</div> */}
                     <ExactLocation address={activity.address} />
                   </div>
                 );

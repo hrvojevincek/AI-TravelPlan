@@ -2,7 +2,7 @@
 import { SearchData } from "@/types";
 import { useDataContext } from "./dataContext";
 import Link from "next/link";
-// import { default as Video } from "./components/Video";
+import { default as Video } from "./components/Video";
 import Button from "./components/Button";
 import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
@@ -14,7 +14,7 @@ export default function Home() {
 
   return (
     <>
-      {/* <Video /> */}
+      <Video />
       <div className="flex flex-col md:flex-row top-0 absolute h-screen w-screen">
         <div className="h-screen flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <h2 className="mt-3 mb-10 text-center text-5xl font-bold leading-9 tracking-tight text-white">
