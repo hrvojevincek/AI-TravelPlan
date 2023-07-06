@@ -136,8 +136,6 @@ class RealGPTStrategy implements GPTClientStrategy {
   }
 }
 
-}
-
 let strategy: GPTClientStrategy;
 
 if (process.env.NODE_ENV === "development") {
