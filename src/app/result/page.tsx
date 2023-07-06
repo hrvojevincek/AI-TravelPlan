@@ -5,11 +5,14 @@ import { useDataContext } from "../dataContext";
 import { ResultData } from "@/types";
 import Map from "../api/Map";
 import ExactLocation from "../api/ExactLocation";
+import ChangeMeBtn from "../components/ChangeMeBtn";
 
 function ResultsPage() {
   const { data } = useDataContext();
-
   const [result, setResult] = useState<ResultData>([]);
+  let tryResult: any;
+
+  console.log("WHAT ARE YOU HERE", typeof setResult);
 
   async function search() {
     const result = await fetch(
@@ -18,6 +21,7 @@ function ResultsPage() {
     );
     const responseData = await result.json();
     setResult(responseData);
+    tryResult = responseData;
   }
 
   useEffect(() => {
@@ -36,10 +40,20 @@ function ResultsPage() {
               <h1 className="font-bold text-xl">Day {i + 1}</h1>
               {data.map((activity, index) => {
                 return (
-                  <div key={`result-${i}-day-${index}`}>
+                  <div
+                    className="`bg-${color}`-200"
+                    key={`result-${i}-day-${index}`}
+                  >
                     <div>{activity["activity name"]}</div>
                     <div>{activity.duration}</div>
-                    {/* <div>{activity.address}</div> */}
+                    <ChangeMeBtn
+                      setResult={setResult}
+                      duration={activity.duration}
+                      activityName={activity["activity name"]}
+                      activityIndex={index}
+                      dayIndex={i}
+                    />
+
                     <ExactLocation address={activity.address} />
                   </div>
                 );
