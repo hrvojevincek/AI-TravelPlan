@@ -5,6 +5,7 @@ import { useEffect } from "react";
 interface ChangeMeBtnProps {
   duration: string;
   activityName: string;
+
   activityIndex: number;
   dayIndex: number;
   setResult: React.Dispatch<React.SetStateAction<ResultData>>;
