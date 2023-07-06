@@ -22,10 +22,9 @@ class MockGPTStrategy implements GPTClientStrategy {
     });
     if (search?.response) {
       const data = JSON.parse(search?.response);
-      return data;
+      return { response: data, id: search.id };
     }
-
-    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
+    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city, durations for activities inside the same activity array must not overlap: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
     // if (userInfo) connect to user table
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
@@ -43,7 +42,10 @@ class MockGPTStrategy implements GPTClientStrategy {
           response: response.data.choices[0].text,
         },
       });
-      return JSON.parse(response.data.choices[0].text);
+      return {
+        response: JSON.parse(response.data.choices[0].text),
+        id: savedSearch.id,
+      };
     }
   }
 }

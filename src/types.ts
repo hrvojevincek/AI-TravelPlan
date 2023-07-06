@@ -3,7 +3,10 @@ export type SearchData = {
   duration?: string;
 };
 
-export type ResultData = Day[];
+export type ResultData = {
+  id?: string;
+  response?: Day[];
+};
 
 export type Day = Activity[];
 
@@ -18,7 +21,7 @@ export type ExactLocationProps = {
 };
 
 export type User = {
-  username: string,
-  email: string,
-  image?: string,
-}
+  username: string;
+  email: string;
+  image?: string;
+};

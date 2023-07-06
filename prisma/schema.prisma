@@ -11,27 +11,16 @@ datasource db {
 }
 
 model User {
-  id       String         @id @default(uuid())
-  username String         @unique
-  email    String         @unique
-  password String
-  searches UserToSearch[]
+  id       String   @id @default(uuid())
+  username String
+  email    String   @unique
+  searches Search[]
 }
 
 model Search {
-  id          String         @id @default(uuid())
+  id          String @id @default(uuid())
   destination String
   duration    Int
   response    String
-  users       UserToSearch[]
-}
-
-model UserToSearch {
-  searchId String
-  userId   String
-  saved    Boolean
-  search   Search  @relation(fields: [searchId], references: [id])
-  user     User    @relation(fields: [userId], references: [id])
-
-  @@id([userId, searchId])
+  users       User[]
 }

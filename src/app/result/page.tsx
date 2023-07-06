@@ -5,11 +5,14 @@ import { useDataContext } from "../dataContext";
 import { ResultData } from "@/types";
 import Map from "../api/Map";
 import ExactLocation from "../api/ExactLocation";
+import { useSession } from "next-auth/react";
 
 function ResultsPage() {
   const { data } = useDataContext();
 
-  const [result, setResult] = useState<ResultData>([]);
+  const [result, setResult] = useState<ResultData>({});
+
+  const { data: session } = useSession();
 
   async function search() {
     const result = await fetch(
@@ -24,10 +27,31 @@ function ResultsPage() {
     search();
   }, []);
 
+  async function handleSave() {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      searchId: result.id,
+      user: session?.user,
+    });
+    const reqOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+    const response = await fetch(`/api/search`, reqOptions);
+    if (response.status === 200) {
+      alert("Plan saved correctly");
+      return;
+    }
+    throw new Error("cant save plan");
+  }
+
   return (
     <div className="flex">
       <div className="max-w-2xl p-6 bg-white border border-gray-200 shadow mb-2 rounded-xl">
-        {result.map((data, i) => {
+        {result.response?.map((data, i) => {
           return (
             <div
               key={`result-${i}`}
@@ -47,11 +71,12 @@ function ResultsPage() {
             </div>
           );
         })}
+        <button onClick={handleSave}>Save</button>
       </div>
       <div className="flex-grow">
-        {result.length > 0 ? (
+        {result.response ? (
           <Map
-            activities={result.reduce((acc, day) => {
+            activities={result.response.reduce((acc, day) => {
               return [...acc, ...day];
             }, [])}
           />
