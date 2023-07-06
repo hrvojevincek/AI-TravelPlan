@@ -11,6 +11,11 @@ type searchProps = {
   duration: string;
 };
 
+type editProps = {
+  activityname: string;
+  time: string;
+};
+
 class MockGPTStrategy implements GPTClientStrategy {
   async predict({ destination, duration }: searchProps): Promise<any> {
     // Return your mock data here
@@ -25,13 +30,13 @@ class MockGPTStrategy implements GPTClientStrategy {
       return data;
     }
 
-    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
+    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city, durations for activities inside the same activity array must not overlap: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
     // if (userInfo) connect to user table
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: prompt,
-      temperature: 0,
+      temperature: 1,
       max_tokens: 800,
     });
     //if (userInfo) connect to user table
@@ -44,6 +49,26 @@ class MockGPTStrategy implements GPTClientStrategy {
         },
       });
       return JSON.parse(response.data.choices[0].text);
+    }
+  }
+  async edit({ activityname, time }: editProps): Promise<string | undefined> {
+    try {
+      const prompt = `suggest me another ${activityname} with ${time} in response like this: {
+"activity name": "name",
+duration: "24hour format",
+address: "address"}`;
+
+      const response = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: prompt,
+        temperature: 1,
+        max_tokens: 350,
+      });
+      if (response.data.choices[0].text) {
+        return JSON.parse(response.data.choices[0].text);
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 }
