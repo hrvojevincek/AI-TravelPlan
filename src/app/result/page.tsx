@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDataContext } from "../dataContext";
-import { ResultData } from "@/types";
+import { Activity, Day, ResultData } from "@/types";
 import Map from "../api/Map";
 import ExactLocation from "../api/ExactLocation";
 import ChangeMeBtn from "../components/ChangeMeBtn";
@@ -27,14 +27,14 @@ function ResultsPage() {
   return (
     <div className="flex">
       <div className="max-w-2xl p-6 bg-white border border-gray-200 shadow mb-2 rounded-xl">
-        {result.map((data, i) => {
+        {result.map((dataResponse, i) => {
           return (
             <div
               key={`result-${i}`}
               className="divide-y max-w-2xl p-6 bg-white border border-gray-200 shadow mb-2 rounded-xl"
             >
               <h1 className="font-bold text-xl">Day {i + 1}</h1>
-              {data.map((activity, index) => {
+              {dataResponse.map((activity, index) => {
                 return (
                   <div
                     className="`bg-${color}`-200"
@@ -44,8 +44,11 @@ function ResultsPage() {
                     <div>{activity.duration}</div>
                     <ChangeMeBtn
                       duration={activity.duration}
-                      activityName={activity["activity name"]}
-                      index={index}
+                      destination={data !== null ? data.destination : undefined}
+                      activityIndex={index}
+                      dayIndex={i}
+                      result={result}
+                      setResult={setResult}
                     />
 
                     <ExactLocation address={activity.address} />
