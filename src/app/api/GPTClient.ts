@@ -1,9 +1,10 @@
-import { ResultData } from "@/types";
-import prisma from "../../../db";
-import openai from "../../../openai";
+import { ResultData, ResultEdit } from '@/types';
+import prisma from '../../../db';
+import openai from '../../../openai';
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
+  edit: (props: editProps) => Promise<ResultEdit>;
 };
 
 type searchProps = {
@@ -12,9 +13,29 @@ type searchProps = {
 };
 
 type editProps = {
-  activityname: string;
-  time: string;
+  activityName: string;
+  duration: string;
 };
+
+class GPTClient {
+  private strategy: GPTClientStrategy;
+
+  constructor(strategy: GPTClientStrategy) {
+    this.strategy = strategy;
+  }
+
+  setStrategy(strategy: GPTClientStrategy) {
+    this.strategy = strategy;
+  }
+
+  async predict(input: searchProps) {
+    return this.strategy.predict(input);
+  }
+
+  async edit(input: editProps) {
+    return this.strategy.edit(input);
+  }
+}
 
 class MockGPTStrategy implements GPTClientStrategy {
   async predict({ destination, duration }: searchProps): Promise<any> {
@@ -34,7 +55,7 @@ class MockGPTStrategy implements GPTClientStrategy {
     // if (userInfo) connect to user table
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
-      model: "text-davinci-003",
+      model: 'text-davinci-003',
       prompt: prompt,
       temperature: 1,
       max_tokens: 800,
@@ -51,15 +72,16 @@ class MockGPTStrategy implements GPTClientStrategy {
       return JSON.parse(response.data.choices[0].text);
     }
   }
-  async edit({ activityname, time }: editProps): Promise<string | undefined> {
+
+  async edit({ activityName, duration }: editProps): Promise<any> {
     try {
-      const prompt = `suggest me another ${activityname} with ${time} in response like this: {
-"activity name": "name",
-duration: "24hour format",
-address: "address"}`;
+      const prompt = `suggest me another ${activityName} with ${duration} in response like this: {
+    "activity name": "name",
+    duration: "24hour format",
+    address: "address"}`;
 
       const response = await openai.createCompletion({
-        model: "text-davinci-003",
+        model: 'text-davinci-003',
         prompt: prompt,
         temperature: 1,
         max_tokens: 350,
@@ -88,27 +110,33 @@ class RealGPTStrategy implements GPTClientStrategy {
       return data;
     }
   }
-}
 
-class GPTClient {
-  private strategy: GPTClientStrategy;
+  async edit({ activityName, duration }: editProps): Promise<any> {
+    try {
+      const prompt = `suggest me another ${activityName} with ${duration} in response like this: {
+    "activity name": "name",
+    duration: "24hour format",
+    address: "address"}`;
 
-  constructor(strategy: GPTClientStrategy) {
-    this.strategy = strategy;
-  }
-
-  setStrategy(strategy: GPTClientStrategy) {
-    this.strategy = strategy;
-  }
-
-  async predict(input: searchProps) {
-    return this.strategy.predict(input);
+      const response = await openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: prompt,
+        temperature: 1,
+        max_tokens: 350,
+      });
+      if (response.data.choices[0].text) {
+        return JSON.parse(response.data.choices[0].text);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
 // Now you can create the client with the appropriate strategy
 let strategy: GPTClientStrategy;
-if (process.env.NODE_ENV === "development") {
+
+if (process.env.NODE_ENV === 'development') {
   strategy = new MockGPTStrategy();
 } else {
   strategy = new RealGPTStrategy();
