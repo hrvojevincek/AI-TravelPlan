@@ -18,6 +18,26 @@ type editProps = {
   activityNamesArray: string[] | [];
 };
 
+class GPTClient {
+  private strategy: GPTClientStrategy;
+
+  constructor(strategy: GPTClientStrategy) {
+    this.strategy = strategy;
+  }
+
+  setStrategy(strategy: GPTClientStrategy) {
+    this.strategy = strategy;
+  }
+
+  async predict(input: searchProps) {
+    return this.strategy.predict(input);
+  }
+
+  async edit(input: editProps) {
+    return this.strategy.edit(input);
+  }
+}
+
 class MockGPTStrategy implements GPTClientStrategy {
   async predict({ destination, duration }: searchProps): Promise<any> {
     // Return your mock data here
@@ -38,7 +58,7 @@ class MockGPTStrategy implements GPTClientStrategy {
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: prompt,
-      temperature: 1,
+      temperature: 0,
       max_tokens: 800,
     });
     //if (userInfo) connect to user table
@@ -50,6 +70,7 @@ class MockGPTStrategy implements GPTClientStrategy {
           response: response.data.choices[0].text,
         },
       });
+      console.log(response.data.choices[0].text);
       return JSON.parse(response.data.choices[0].text);
     }
   }
@@ -64,12 +85,12 @@ class MockGPTStrategy implements GPTClientStrategy {
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 1,
+        temperature: 0,
         max_tokens: 350,
       });
 
       if (response.data.choices[0].text) {
-        return JSON.parse(response.data.choices[0].text);
+        return response.data.choices[0].text;
       }
     } catch (error) {
       console.error(error);
@@ -115,23 +136,6 @@ class RealGPTStrategy implements GPTClientStrategy {
   }
 }
 
-class GPTClient {
-  private strategy: GPTClientStrategy;
-
-  constructor(strategy: GPTClientStrategy) {
-    this.strategy = strategy;
-  }
-
-  setStrategy(strategy: GPTClientStrategy) {
-    this.strategy = strategy;
-  }
-
-  async predict(input: searchProps) {
-    return this.strategy.predict(input);
-  }
-  async edit(input: editProps) {
-    return this.strategy.edit(input);
-  }
 }
 
 let strategy: GPTClientStrategy;

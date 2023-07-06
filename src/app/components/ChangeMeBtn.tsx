@@ -1,5 +1,7 @@
 "use client";
+
 import { Activity, Day, ResultData } from "@/types";
+
 import { useEffect } from "react";
 
 interface ChangeMeBtnProps {
@@ -38,6 +40,7 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
     const changeResult = await fetch(
       `/api/activity?duration=${duration}&destination=${destination}`,
       requestOptions
+
     );
     const responseData = await changeResult.json();
     const parsedData = JSON.parse(responseData);
@@ -64,11 +67,39 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
   return (
     <button
       className="text-white bg-black font-semi py-1 px-2 rounded"
+
       onClick={activity}
     >
-      Click Me
+      Change this activity!
     </button>
   );
 };
 
 export default ChangeMeBtn;
+
+// { 0x06
+//   name: 'arol',
+//   age: 36,
+//   friends: [ 0x07
+//     { 0x08
+//       name: 'Hrvoje',
+//       age: 36,
+//     }, { 0x04
+//       name: 'Albert',
+//       age: 22
+//     }
+//   ]
+// }
+
+// return {
+//   ...person,
+//   friends: person.friends.map(f => {
+//     if(f.name === 'Hrvoje') {
+//       return {
+//         ...f,
+//         age: 37
+//       }
+//     }
+//     return f
+//   })
+// }
