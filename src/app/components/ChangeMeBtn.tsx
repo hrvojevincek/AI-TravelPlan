@@ -57,12 +57,6 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
     const responseData = await changeResult.json();
     const parsedData = JSON.parse(responseData);
     handleResultChange(parsedData[0]);
-
-    // const removedActivities: string[] = [];
-    // removedActivities.push(parsedData[0]);
-
-    // console.log("changed activity", parsedData[0]);
-    // console.log("removedActivities", removedActivities);
   }
 
   return (

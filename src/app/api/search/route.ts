@@ -11,7 +11,6 @@ export async function GET(request: Request) {
       destination,
       duration,
     });
-    console.log("route==>", response);
     return NextResponse.json(response);
   }
 }

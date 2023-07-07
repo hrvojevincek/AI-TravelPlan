@@ -4,7 +4,7 @@ import client from "../GPTClient";
 export async function POST(request: Request) {
   const req = await request.json();
   const { activityNamesArray } = req;
-
+  console.log("this is in route: ", activityNamesArray);
   const { searchParams } = new URL(request.url);
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");

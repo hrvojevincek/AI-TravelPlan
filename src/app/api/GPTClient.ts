@@ -20,6 +20,7 @@ type editProps = {
 
 class GPTClient {
   private strategy: GPTClientStrategy;
+  public uniqueActivities: string[] = [];
 
   constructor(strategy: GPTClientStrategy) {
     this.strategy = strategy;
@@ -34,7 +35,28 @@ class GPTClient {
   }
 
   async edit(input: editProps) {
-    return this.strategy.edit(input);
+    const result = await this.strategy.edit(input);
+    this.uniqueActivities = this.updateArray(
+      this.uniqueActivities,
+      input.activityNamesArray
+    );
+    console.log(
+      "GPTUPDATEDPLACES",
+      this.uniqueActivities.length,
+      this.uniqueActivities
+    );
+    return result;
+  }
+
+  private updateArray(
+    places: string[],
+    activityNamesArray: string[]
+  ): string[] {
+    places.sort();
+    activityNamesArray.sort();
+    return places.concat(
+      activityNamesArray.filter((item) => !places.includes(item))
+    );
   }
 }
 
@@ -82,24 +104,6 @@ class MockGPTStrategy implements GPTClientStrategy {
     duration,
     activityNamesArray,
   }: editProps): Promise<any> {
-    let places: string[] = [];
-
-    function updateArray(places: string[], activityNamesArray: string[]) {
-      console.log("here");
-      places.sort();
-      activityNamesArray.sort();
-
-      places = places.concat(
-        activityNamesArray.filter((item) => !places.includes(item))
-      );
-      console.log("sorted", places);
-      return places;
-    }
-
-    updateArray(places, activityNamesArray);
-    console.log("GPTUPDATEDPLACES", places);
-    console.log("activityNamesArray", activityNamesArray);
-
     try {
       const prompt = `suggest me another activity that isnt any of this ones ${activityNamesArray} in the same ${destination} with duration ${duration}, the times should not overlap with other durations that day. response should be in json format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line like this: [{"activity name": answer, "duration": answer(24 hour format-24 hour format), address: answer}]`;
       const response = await openai.createCompletion({
