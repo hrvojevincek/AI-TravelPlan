@@ -13,7 +13,8 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "seed": "prisma db seed",
-    "test": "jest --watch"
+    "dev:test": "jest --watch",
+    "test": "jest --ci --coverage"
   },
   "dependencies": {
     "@prisma/client": "^4.16.2",
