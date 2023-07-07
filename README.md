@@ -35,6 +35,34 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## CHAT GPT PROMPT
 
-3 day trip to barcelona. 
-response should be in json format (an array of 3 day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city: 
+3 day trip to barcelona.
+response should be in json format (an array of 3 day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis, when choosing activities try and include the most known ones of the city:
 [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}],[{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)},{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) }],[{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)},{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)},{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]
+
+use objects in react to change state
+// { 0x06
+// name: 'arol',
+// age: 36,
+// friends: [ 0x07
+// { 0x08
+// name: 'Hrvoje',
+// age: 36,
+// }, { 0x04
+// name: 'Albert',
+// age: 22
+// }
+// ]
+// }
+
+// return {
+// ...person,
+// friends: person.friends.map(f => {
+// if(f.name === 'Hrvoje') {
+// return {
+// ...f,
+// age: 37
+// }
+// }
+// return f
+// })
+// }

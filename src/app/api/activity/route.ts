@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import client from "../GPTClient";
 
-
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log(req);
   const { activityNamesArray } = req;
 
   const { searchParams } = new URL(request.url);

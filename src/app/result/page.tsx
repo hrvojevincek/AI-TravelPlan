@@ -12,8 +12,6 @@ function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
   let tryResult: any;
 
-  console.log("WHAT ARE YOU HERE", typeof setResult);
-
   async function search() {
     const result = await fetch(
       `/api/search?destination=${data?.destination}&duration=${data?.duration}`,
@@ -21,6 +19,7 @@ function ResultsPage() {
     );
     const responseData = await result.json();
     setResult(responseData);
+    console.log("response data result line 22", responseData);
     tryResult = responseData;
   }
 
