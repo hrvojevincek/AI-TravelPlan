@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`signed in renders singed out button 1`] = `
+<div>
+  <div
+    class="flex gap-4 ml-auto"
+  >
+    <p
+      class="text-sky-600"
+    >
+      John
+    </p>
+    <button
+      class="text-red-600"
+    >
+      Sign Out
+    </button>
+  </div>
+</div>
+`;
+
+exports[`signed out renders signed in button 1`] = `
+<div>
+  <button
+    class="text-green-600 ml-auto"
+  >
+    Sign In
+  </button>
+</div>
+`;
