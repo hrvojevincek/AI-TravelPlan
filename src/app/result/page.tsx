@@ -19,7 +19,6 @@ function ResultsPage() {
     );
     const responseData = await result.json();
     setResult(responseData);
-    console.log("response data result line 22", responseData);
     tryResult = responseData;
   }
 

@@ -1,4 +1,4 @@
-import { ResultData, ResultEdit } from "@/types";
+import { Activity, ResultData, ResultEdit } from "@/types";
 import prisma from "../../../db";
 import openai from "../../../openai";
 
@@ -16,6 +16,7 @@ type editProps = {
   destination: string;
   duration: string;
   activityNamesArray: string[] | [];
+  // uniqueActivities: string[] | [];
 };
 
 class GPTClient {
@@ -40,22 +41,17 @@ class GPTClient {
       this.uniqueActivities,
       input.activityNamesArray
     );
-    console.log(
-      "GPTUPDATEDPLACES",
-      this.uniqueActivities.length,
-      this.uniqueActivities
-    );
     return result;
   }
 
-  private updateArray(
-    places: string[],
+  public updateArray(
+    uniqueActivities: string[],
     activityNamesArray: string[]
   ): string[] {
-    places.sort();
+    uniqueActivities.sort();
     activityNamesArray.sort();
-    return places.concat(
-      activityNamesArray.filter((item) => !places.includes(item))
+    return uniqueActivities.concat(
+      activityNamesArray.filter((item) => !uniqueActivities.includes(item))
     );
   }
 }
@@ -71,13 +67,19 @@ class MockGPTStrategy implements GPTClientStrategy {
     });
     if (search?.response) {
       const data = JSON.parse(search?.response);
+
+      data?.forEach((data: Activity[]) =>
+        data.forEach((item) =>
+          client.uniqueActivities.push(item["activity name"])
+        )
+      );
       return data;
     }
 
     const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis. when choosing activities try and include the most known ones of the city. durations for activities inside the same activity array must not overlap, they should only show times where attractions are open or between 9am & 6pm. THE FORMAT: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
     // if (userInfo) connect to user table
 
-    const prompt2 = `${duration} day trip to ${destination}: please provide a detailed itinerary. Each day should consist of three major activities or attractions, each activity should include the name, duration (24-hour format), and the address. The proposed activities should be popular and well-known in the given destination. Please ensure that the times for the activities do not overlap and take into consideration the opening hours of the attractions, which are usually between 9am and 6pm. The response should be structured in a stricly JSON format, in the following structure: [[{"activity name": (activity name here), "duration": (activity duration here in 24-hour format), "address": (activity location here)}, {and so on for 2 more activities}], [and so on for the number of days]]`;
+    const prompt2 = `${duration} day trip to ${destination}: please provide a detailed itinerary. Each day should consist of three unique major activities or attractions, dont make them repeat. Each activity should include the name, duration (24-hour format), and the address. The proposed activities should be popular and well-known in the given destination. Please ensure that the times for the activities do not overlap and take into consideration the opening hours of the attractions, which are usually between 9am and 6pm. The response should be structured in a stricly JSON format, in the following structure: [[{"activity name": (activity name here), "duration": (activity duration here in 24-hour format), "address": (activity location here)}, {and so on for 2 more activities}], [and so on for the number of days]]`;
 
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
@@ -95,7 +97,13 @@ class MockGPTStrategy implements GPTClientStrategy {
           response: response.data.choices[0].text,
         },
       });
-      return JSON.parse(response.data.choices[0].text);
+      const data = JSON.parse(response.data.choices[0].text);
+      data?.forEach((data: Activity[]) =>
+        data.forEach((item) =>
+          client.uniqueActivities.push(item["activity name"])
+        )
+      );
+      return data;
     }
   }
 
@@ -104,8 +112,13 @@ class MockGPTStrategy implements GPTClientStrategy {
     duration,
     activityNamesArray,
   }: editProps): Promise<any> {
+    const uniqueplaces = client.updateArray(
+      client.uniqueActivities,
+      activityNamesArray
+    );
+
     try {
-      const prompt = `suggest me another activity that isnt any of this ones ${activityNamesArray} in the same ${destination} with duration ${duration}, the times should not overlap with other durations that day. response should be in json format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line like this: [{"activity name": answer, "duration": answer(24 hour format-24 hour format), address: answer}]`;
+      const prompt = `suggest me another activity that isnt any of this ones ${uniqueplaces} in the same ${destination} with duration ${duration}, the times should not overlap with other durations that day. response should be in json format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line like this: [{"activity name": answer, "duration": answer(24 hour format-24 hour format), address: answer}]`;
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
