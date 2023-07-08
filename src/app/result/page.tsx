@@ -27,13 +27,13 @@ function ResultsPage() {
   }, []);
 
   return (
-    <div className="flex">
-      <div className="max-w-2xl p-6 bg-white border border-gray-200 shadow mb-2 rounded-xl">
+    <div className="flex h-screen w-screen ">
+      <div className="overflow-auto p-6 bg-white border border-gray-200 shadow">
         {result.map((dataResponse, i) => {
           return (
             <div
               key={`result-${i}`}
-              className="divide-y max-w-2xl p-6 bg-white border border-gray-200 shadow mb-2 rounded-xl"
+              className="divide-y max-w-2xl p-6 bg-white border border-gray-700 shadow mb-2 rounded-xl"
             >
               <h1 className="font-bold text-xl">Day {i + 1}</h1>
               {dataResponse.map((activity, index) => {

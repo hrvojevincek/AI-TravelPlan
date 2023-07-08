@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 const containerStyle = {
   width: "100%",
-  height: "400px",
+  height: "100vh",
 };
 
 const Map = ({ activities }: { activities: Activity[] }) => {

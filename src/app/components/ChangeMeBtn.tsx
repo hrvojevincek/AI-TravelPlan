@@ -56,6 +56,7 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
 
     const responseData = await changeResult.json();
     const parsedData = JSON.parse(responseData);
+
     handleResultChange(parsedData[0]);
   }
 

@@ -5,8 +5,6 @@ export async function POST(request: Request) {
   const req = await request.json();
   const { activityNamesArray } = req;
 
-  // client.updateArray(client.uniqueActivities, activityNamesArray)
-
   const { searchParams } = new URL(request.url);
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
