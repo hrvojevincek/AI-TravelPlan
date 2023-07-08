@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useDataContext } from "../dataContext";
-import { Activity, Day, ResultData } from "@/types";
-import Map from "../api/Map";
-import ExactLocation from "../api/ExactLocation";
+import { ResultData } from "@/types";
+import Map from "../components/Map";
+import ExactLocation from "../components/ExactLocation";
 import ChangeMeBtn from "../components/ChangeMeBtn";
 
 function ResultsPage() {

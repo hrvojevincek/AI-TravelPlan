@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       duration,
       activityNamesArray,
     });
+
     return NextResponse.json(response);
   }
 }

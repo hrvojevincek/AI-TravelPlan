@@ -84,8 +84,8 @@ class MockGPTStrategy implements GPTClientStrategy {
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: prompt2,
-      temperature: 0,
+      prompt: prompt,
+      temperature: 1,
       max_tokens: 800,
     });
     //if (userInfo) connect to user table
