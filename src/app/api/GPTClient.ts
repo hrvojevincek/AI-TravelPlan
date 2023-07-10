@@ -1,6 +1,7 @@
 import { Activity, Day, ResultData, ResultEdit } from "@/types";
 import prisma from "../../../db";
 import openai from "../../../openai";
+import { json } from "stream/consumers";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -86,7 +87,7 @@ class MockGPTStrategy implements GPTClientStrategy {
       },
     });
     if (search?.response) {
-      const data = client.parseChatGPT(search?.response);
+      const data = JSON.parse(search?.response);
       data?.forEach((data: Activity[]) =>
         data.forEach((item) => {
           return client.uniqueActivities.push(item["activity name"]);
@@ -125,11 +126,6 @@ class MockGPTStrategy implements GPTClientStrategy {
     Answer after the ampersands line
     &&&&&&&`;
 
-    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis. when choosing activities try and include the most known ones of the city. durations for activities inside the same activity array must not overlap, they should only show times where attractions are open or between 9am & 6pm. THE FORMAT: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
-    // if (userInfo) connect to user table
-
-    const prompt2 = `${duration} day trip to ${destination}: please provide a detailed itinerary. Each day should consist of three unique major activities or attractions, dont make them repeat. Each activity should include the name, duration (24-hour format), and the address. The proposed activities should be popular and well-known in the given destination. Please ensure that the times for the activities do not overlap and take into consideration the opening hours of the attractions, which are usually between 9am and 6pm. The response should be structured in a stricly JSON format, in the following structure: [[{"activity name": (activity name here), "duration": (activity duration here in 24-hour format), "address": (activity location here)}, {and so on for 2 more activities}], [and so on for the number of days]], DONT FORGET QUOTATION MARKS, BRACKETS!!!`;
-
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
       model: "text-davinci-003",
@@ -139,23 +135,21 @@ class MockGPTStrategy implements GPTClientStrategy {
     });
     //if (userInfo) connect to user table
     if (response.data.choices[0].text !== undefined) {
+      const responseObject = client.parseChatGPT(response.data.choices[0].text);
       const savedSearch = await prisma.search.create({
         data: {
           duration: parseInt(duration),
           destination: destination.toLowerCase(),
-          response: response.data.choices[0].text,
+          response: JSON.stringify(responseObject),
         },
       });
-      const data = client.parseChatGPT(response.data.choices[0].text);
-      data?.forEach((day: Activity[]) => {
+      responseObject.forEach((day: Activity[]) => {
         day.forEach((activity: Activity) => {
           client.uniqueActivities.push(activity["activity name"]);
         });
       });
-      console.log(client.uniqueActivities);
 
-      console.log("data", data);
-      return data;
+      return responseObject;
     }
   }
 
