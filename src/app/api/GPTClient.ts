@@ -1,4 +1,4 @@
-import { Activity, ResultData, ResultEdit } from "@/types";
+import { Activity, Day, ResultData, ResultEdit } from "@/types";
 import prisma from "../../../db";
 import openai from "../../../openai";
 
@@ -53,6 +53,27 @@ class GPTClient {
       activityNamesArray.filter((item) => !uniqueActivities.includes(item))
     );
   }
+
+  public parseChatGPT(result: string) {
+    console.log("PARSE FUNCTION", result);
+    return result
+      .split("%%%")
+      .filter((a) => a.trim())
+      .map((day) => {
+        day = day.split("---\n")[1];
+        return day
+          .split("$$$")
+          .map((e) => e.trim())
+          .map((a) => {
+            const [name, time, address] = a.split("\n");
+            return {
+              "activity name": name,
+              duration: time,
+              address,
+            };
+          });
+      });
+  }
 }
 
 class MockGPTStrategy implements GPTClientStrategy {
@@ -76,6 +97,34 @@ class MockGPTStrategy implements GPTClientStrategy {
       return data;
     }
 
+    const responsePrompt = `${duration} day trip to ${destination}. Use "%%%" for delimiting days.
+    the result should be formatted in this way:
+    Day x:
+    ---
+    <Breakfast restaurant or bar>
+    <Breakfast time and duration>
+    <Breakfast address>
+    $$$
+    <Activity #1 name>
+    <Activity #1 time and duration>
+    <Activity #1 address>
+    $$$
+    <Lunch restaurant or bar>
+    <Lunch time and duration>
+    <Lunch address>
+    $$$
+    <Activity #2 name>
+    <Activity #2 time and duration>
+    <Activity #2 address>
+    $$$
+    <Dinner restaurant or bar>
+    <Dinner time and duration>
+    <Dinner address>
+    %%%
+    
+    Answer after the ampersands line
+    &&&&&&&`;
+
     const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis. when choosing activities try and include the most known ones of the city. durations for activities inside the same activity array must not overlap, they should only show times where attractions are open or between 9am & 6pm. THE FORMAT: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
     // if (userInfo) connect to user table
 
@@ -84,7 +133,7 @@ class MockGPTStrategy implements GPTClientStrategy {
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: prompt2,
+      prompt: responsePrompt,
       temperature: 1,
       max_tokens: 800,
     });
@@ -97,16 +146,15 @@ class MockGPTStrategy implements GPTClientStrategy {
           response: response.data.choices[0].text,
         },
       });
-
-      const data = JSON.parse(response.data.choices[0].text);
-
-      data?.forEach((data: Activity[]) =>
-        data.forEach((item) =>
-          client.uniqueActivities.push(item["activity name"])
-        )
-      );
+      const data = client.parseChatGPT(response.data.choices[0].text);
+      data?.forEach((day: Activity[]) => {
+        day.forEach((activity: Activity) => {
+          client.uniqueActivities.push(activity["activity name"]);
+        });
+      });
       console.log(client.uniqueActivities);
 
+      console.log("data", data);
       return data;
     }
   }
