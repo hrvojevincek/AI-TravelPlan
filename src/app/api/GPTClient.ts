@@ -86,7 +86,7 @@ class MockGPTStrategy implements GPTClientStrategy {
       },
     });
     if (search?.response) {
-      const data = JSON.parse(search?.response);
+      const data = client.parseChatGPT(search?.response);
       data?.forEach((data: Activity[]) =>
         data.forEach((item) => {
           return client.uniqueActivities.push(item["activity name"]);
