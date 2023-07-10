@@ -1,34 +1,33 @@
 "use client";
-import { Activity, ResultData } from "@/types";
-import { useEffect } from "react";
+
+import { Activity, Day, ResultData } from "@/types";
+import { useState, useEffect } from "react";
 
 interface ChangeMeBtnProps {
   duration: string;
-  activityName: string;
+  destination: string | undefined;
   activityIndex: number;
   dayIndex: number;
+  result: ResultData;
   setResult: React.Dispatch<React.SetStateAction<ResultData>>;
 }
 
 const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
   duration,
-  activityName,
+  destination,
   activityIndex,
   dayIndex,
   setResult,
+  result,
 }) => {
-  async function activity() {
-    const changeResult = await fetch(
-      `/api/activity?duration=${duration}&activityName=${activityName}`,
-      { headers: { "Content-Type": "application/json" } }
-    );
-    const responseData = await changeResult.json();
-    const parsedData = JSON.parse(responseData);
-    handleResultChange(parsedData[0]);
-  }
+  let places: string[] = [];
+  result.forEach((day: Day) => {
+    day.map((act: Activity) => {
+      places.push(act["activity name"]);
+    });
+  });
 
   function handleResultChange(activity: Activity) {
-    console.log("this is the activity", activity);
     setResult((prev) => {
       return prev.map((originalDay, index) => {
         if (dayIndex === index) {
@@ -44,10 +43,27 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
     });
   }
 
+  async function changeActivity() {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const raw = JSON.stringify({ activityNamesArray: places });
+    const requestOptions = { method: "POST", headers: myHeaders, body: raw };
+
+    const changeResult = await fetch(
+      `/api/activity?duration=${duration}&destination=${destination}`,
+      requestOptions
+    );
+
+    const responseData = await changeResult.json();
+    const parsedData = JSON.parse(responseData);
+
+    handleResultChange(parsedData[0]);
+  }
+
   return (
     <button
-      className="text-white bg-gray-300 font-bold py-2 px-4 rounded"
-      onClick={activity}
+      className="text-white bg-black font-semi py-1 px-2 rounded"
+      onClick={changeActivity}
     >
       Change this activity!
     </button>
@@ -55,30 +71,3 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
 };
 
 export default ChangeMeBtn;
-
-// { 0x06
-//   name: 'arol',
-//   age: 36,
-//   friends: [ 0x07
-//     { 0x08
-//       name: 'Hrvoje',
-//       age: 36,
-//     }, { 0x04
-//       name: 'Albert',
-//       age: 22
-//     }
-//   ]
-// }
-
-// return {
-//   ...person,
-//   friends: person.friends.map(f => {
-//     if(f.name === 'Hrvoje') {
-//       return {
-//         ...f,
-//         age: 37
-//       }
-//     }
-//     return f
-//   })
-// }

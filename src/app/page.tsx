@@ -2,7 +2,7 @@
 import { SearchData } from "@/types";
 import { useDataContext } from "./dataContext";
 import Link from "next/link";
-import { default as Video } from "./components/Video";
+// import { default as Video } from "./components/Video";
 import Button from "./components/Button";
 import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
