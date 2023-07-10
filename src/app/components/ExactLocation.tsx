@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ExactLocationProps } from "@/types";
 
-const ExactLocation = ({ address }: ExactLocationProps) => {
+export type ExactLocationProps = {
+  address: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+const ExactLocation = ({ address, ...props }: ExactLocationProps) => {
   const [googleMapsLink, setGoogleMapsLink] = useState("");
 
   useEffect(() => {
@@ -18,14 +21,10 @@ const ExactLocation = ({ address }: ExactLocationProps) => {
   };
 
   return (
-    <div className="text-blue-500">
-      {googleMapsLink ? (
-        <Link href={googleMapsLink} target="_blank">
-          {address}
-        </Link>
-      ) : (
-        <p>Invalid address</p>
-      )}
+    <div role="button" className="text-blue-500" {...props}>
+      {/* <Link href={googleMapsLink} target="_blank"> */}
+      {address}
+      {/* </Link> */}
     </div>
   );
 };

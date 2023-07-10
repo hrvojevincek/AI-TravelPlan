@@ -1,4 +1,9 @@
-import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  LoadScript,
+  InfoWindow,
+} from "@react-google-maps/api";
 import type { Activity } from "@/types";
 import { geocodeAddress } from "../geocode";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -8,8 +13,13 @@ const containerStyle = {
   height: "100vh",
 };
 
-const Map = ({ activities }: { activities: Activity[] }) => {
-  const [center] = useState({
+type MapProps = {
+  activities: Activity[];
+  selectedActivity?: Activity;
+};
+
+const Map = ({ activities, selectedActivity }: MapProps) => {
+  const [center, setCenter] = useState({
     lat: 0, // Latitud del centro del mapa
     lng: 0, // Longitud del centro del mapa
   });
@@ -19,18 +29,31 @@ const Map = ({ activities }: { activities: Activity[] }) => {
   const hanldeMapLoad = useCallback((mapInstance: google.maps.Map) => {
     mapRef.current = mapInstance;
   }, []);
+  type Marker = { id: string; lat: number; lng: number };
 
-  const [activityMarkers, setActivityMarkers] = useState<
-    { id: string; lat: number; lng: number }[]
-  >([]);
+  const [activityMarkers, setActivityMarkers] = useState<Marker[]>([]);
+
+  const [selectedMarker, setSelectedMarker] = useState<Marker>();
 
   useEffect(() => {
     const fetchActivityMarkers = async () => {
-      const markers: { id: string; lat: number; lng: number }[] = [];
+      const markers: {
+        id: string;
+        lat: number;
+        lng: number;
+        icon: { url: string };
+      }[] = [];
       for (const activity of activities) {
         try {
           const { lat, lng } = await geocodeAddress(activity.address);
-          markers.push({ id: activity["activity name"], lat, lng });
+          markers.push({
+            id: activity["activity name"],
+            lat,
+            lng,
+            icon: {
+              url: `http://maps.google.com/mapfiles/ms/icons/red-dot.png`,
+            },
+          });
         } catch (error) {
           console.error("Error geocoding address:", error);
         }
@@ -48,19 +71,51 @@ const Map = ({ activities }: { activities: Activity[] }) => {
       }
     };
     fetchActivityMarkers();
+    console.log("FETCHING ACTIVITY MARKERS");
   }, [activities]);
 
-  //   const googleMapsApiKey = 'AIzaSyCCB6Ygzq1qrFozt9fOzQ-GjUBz6C_f9nk'
+  useEffect(() => {
+    if (!selectedActivity) return;
+
+    const marker = activityMarkers.find(
+      (marker) => marker.id === selectedActivity["activity name"]
+    );
+    if (!marker) return;
+    setSelectedMarker(marker);
+    setCenter({
+      lat: marker.lat,
+      lng: marker.lng,
+    });
+    setActivityMarkers((markers) =>
+      markers.map((m) => {
+        if (m.id === marker.id) {
+          return {
+            ...m,
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            },
+          };
+        } else {
+          return {
+            ...m,
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+            },
+          };
+        }
+      })
+    );
+  }, [selectedActivity]);
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyCCB6Ygzq1qrFozt9fOzQ-GjUBz6C_f9nk">
+    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={5}
         onLoad={hanldeMapLoad}
       >
-        {activityMarkers.map((marker) => {
+        {activityMarkers.map((marker: any) => {
           return (
             <Marker
               key={`marker-${marker.id}`}
@@ -68,9 +123,29 @@ const Map = ({ activities }: { activities: Activity[] }) => {
                 lat: marker.lat,
                 lng: marker.lng,
               }}
+              onClick={() => {
+                setSelectedMarker(marker);
+              }}
+              icon={marker.icon}
             />
           );
         })}
+        {selectedMarker && (
+          <InfoWindow
+            options={{
+              pixelOffset: new window.google.maps.Size(0, -40),
+            }}
+            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+            onCloseClick={() => {
+              setSelectedMarker(undefined);
+            }}
+          >
+            <div>
+              <h2>{selectedMarker.id}</h2>
+              <p>This is extra information about this location.</p>
+            </div>
+          </InfoWindow>
+        )}
       </GoogleMap>
     </LoadScript>
   );

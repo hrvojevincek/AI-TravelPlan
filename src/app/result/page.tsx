@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ResultData } from "@/types";
+import { ResultData, Activity } from "@/types";
 import Map from "../components/Map";
 import ExactLocation from "../components/ExactLocation";
 import ChangeMeBtn from "../components/ChangeMeBtn";
@@ -26,6 +26,8 @@ function ResultsPage() {
     "TravelAISearchId",
     null
   );
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [selectedActivity, setSelectedActivity] = useState<Activity>();
 
   async function search() {
     if (searchId !== null) {
@@ -41,9 +43,10 @@ function ResultsPage() {
       `/api/search?destination=${destination}&duration=${duration}&preferences=${preferences}`,
       { headers: { "Content-Type": "application/json" } }
     );
-    const responseData = await result.json();
+    const responseData = (await result.json()) as ResultData;
     setResult(responseData);
     setLoading(false);
+    setActivities(responseData.flat());
   }
 
   useEffect(() => {
@@ -111,7 +114,9 @@ function ResultsPage() {
               {dataResponse.map((activity, index) => {
                 return (
                   <div
-                    className="`bg-${color}`-200"
+                    className={`${
+                      activity === selectedActivity ? "bg-yellow-100" : ""
+                    }`}
                     key={`result-${i}-day-${index}`}
                   >
                     <div>{activity["activity name"]}</div>
@@ -125,7 +130,10 @@ function ResultsPage() {
                       result={result}
                     />
 
-                    <ExactLocation address={activity.address} />
+                    <ExactLocation
+                      onClick={() => setSelectedActivity(activity)}
+                      address={activity.address}
+                    />
                   </div>
                 );
               })}
@@ -135,11 +143,7 @@ function ResultsPage() {
       </div>
       <div className="flex-grow">
         {result.length > 0 ? (
-          <Map
-            activities={result.reduce((acc, day) => {
-              return [...acc, ...day];
-            }, [])}
-          />
+          <Map activities={activities} selectedActivity={selectedActivity} />
         ) : (
           <div />
         )}
