@@ -27,7 +27,13 @@ function ResultsPage() {
     null
   );
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [selectedActivity, setSelectedActivity] = useState<Activity>();
+  let tryResult: any;
+
+  const [selectedActivity, setSelectedActivity] = useState<string>("");
+
+  const onHandleSelectedActivity = (id: string) => {
+    setSelectedActivity(id);
+  };
 
   async function search() {
     if (searchId !== null) {
@@ -115,7 +121,9 @@ function ResultsPage() {
                 return (
                   <div
                     className={`${
-                      activity === selectedActivity ? "bg-yellow-100" : ""
+                      activity["activity name"] === selectedActivity
+                        ? "bg-yellow-100"
+                        : ""
                     }`}
                     key={`result-${i}-day-${index}`}
                   >
@@ -131,7 +139,9 @@ function ResultsPage() {
                     />
 
                     <ExactLocation
-                      onClick={() => setSelectedActivity(activity)}
+                      onClick={() =>
+                        onHandleSelectedActivity(activity["activity name"])
+                      }
                       address={activity.address}
                     />
                   </div>
@@ -143,7 +153,12 @@ function ResultsPage() {
       </div>
       <div className="flex-grow">
         {result.length > 0 ? (
-          <Map activities={activities} selectedActivity={selectedActivity} />
+          //pass event
+          <Map
+            activities={activities}
+            selectedActivity={selectedActivity}
+            handleSelectActivity={onHandleSelectedActivity}
+          />
         ) : (
           <div />
         )}

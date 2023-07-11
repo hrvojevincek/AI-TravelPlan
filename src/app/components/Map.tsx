@@ -15,10 +15,15 @@ const containerStyle = {
 
 type MapProps = {
   activities: Activity[];
-  selectedActivity?: Activity;
+  selectedActivity?: string;
+  handleSelectActivity: (id: string) => void;
 };
 
-const Map = ({ activities, selectedActivity }: MapProps) => {
+const Map = ({
+  activities,
+  selectedActivity,
+  handleSelectActivity,
+}: MapProps) => {
   const [center, setCenter] = useState({
     lat: 0, // Latitud del centro del mapa
     lng: 0, // Longitud del centro del mapa
@@ -26,10 +31,16 @@ const Map = ({ activities, selectedActivity }: MapProps) => {
 
   const mapRef = useRef<google.maps.Map>();
 
-  const hanldeMapLoad = useCallback((mapInstance: google.maps.Map) => {
+  const handleMapLoad = useCallback((mapInstance: google.maps.Map) => {
     mapRef.current = mapInstance;
   }, []);
-  type Marker = { id: string; lat: number; lng: number };
+
+  type Marker = {
+    id: string;
+    lat: number;
+    lng: number;
+    icon?: { url: string };
+  };
 
   const [activityMarkers, setActivityMarkers] = useState<Marker[]>([]);
 
@@ -78,7 +89,7 @@ const Map = ({ activities, selectedActivity }: MapProps) => {
     if (!selectedActivity) return;
 
     const marker = activityMarkers.find(
-      (marker) => marker.id === selectedActivity["activity name"]
+      (marker) => marker.id === selectedActivity
     );
     if (!marker) return;
     setSelectedMarker(marker);
@@ -107,15 +118,17 @@ const Map = ({ activities, selectedActivity }: MapProps) => {
     );
   }, [selectedActivity]);
 
+  // my key AIzaSyAP7H0TvFg3Qsm-lQ8B2zPCIUnONcXiCJs
+
   return (
     <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={5}
-        onLoad={hanldeMapLoad}
+        onLoad={handleMapLoad}
       >
-        {activityMarkers.map((marker: any) => {
+        {activityMarkers.map((marker: Marker) => {
           return (
             <Marker
               key={`marker-${marker.id}`}
@@ -123,9 +136,7 @@ const Map = ({ activities, selectedActivity }: MapProps) => {
                 lat: marker.lat,
                 lng: marker.lng,
               }}
-              onClick={() => {
-                setSelectedMarker(marker);
-              }}
+              onClick={() => handleSelectActivity(marker.id)}
               icon={marker.icon}
             />
           );
@@ -142,7 +153,6 @@ const Map = ({ activities, selectedActivity }: MapProps) => {
           >
             <div>
               <h2>{selectedMarker.id}</h2>
-              <p>This is extra information about this location.</p>
             </div>
           </InfoWindow>
         )}
