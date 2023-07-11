@@ -6,26 +6,31 @@ import { ResultData } from "@/types";
 import Map from "../components/Map";
 import ExactLocation from "../components/ExactLocation";
 import ChangeMeBtn from "../components/ChangeMeBtn";
+import LoadingPage from "../loading";
 
 function ResultsPage() {
   const { data } = useDataContext();
   const [result, setResult] = useState<ResultData>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   let tryResult: any;
 
-  async function search() {
-    const result = await fetch(
-      `/api/search?destination=${data?.destination}&duration=${data?.duration}`,
-      { headers: { "Content-Type": "application/json" } }
-    );
-    const responseData = await result.json();
-    setResult(responseData);
-    tryResult = responseData;
-  }
-
   useEffect(() => {
+    const search = async () => {
+      const result = await fetch(
+        `/api/search?destination=${data?.destination}&duration=${data?.duration}`,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      const responseData = await result.json();
+      setResult(responseData);
+      tryResult = responseData;
+      setLoading(false);
+    };
     search();
   }, []);
 
+  if (loading) {
+    return <LoadingPage />;
+  }
   return (
     <div className="flex h-screen w-screen ">
       <div className="overflow-auto p-6 bg-white border border-gray-200 shadow">

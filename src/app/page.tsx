@@ -6,6 +6,8 @@ import Link from "next/link";
 import Button from "./components/Button";
 import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import LoadingPage from "./loading";
 
 export default function Home() {
   const { data: session } = useSession();
