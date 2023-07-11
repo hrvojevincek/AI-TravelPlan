@@ -5,8 +5,6 @@ import { Inter } from "next/font/google";
 
 import ProvidersWrapper from "./Providers";
 
-import { DataProvider } from "./dataContext";
-
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata = {
@@ -21,11 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <DataProvider>
-        <ProvidersWrapper>
-          <body className={inter.className}>{children}</body>
-        </ProvidersWrapper>
-      </DataProvider>
+      <ProvidersWrapper>
+        <body className={inter.className}>{children}</body>
+      </ProvidersWrapper>
     </html>
   );
 }
