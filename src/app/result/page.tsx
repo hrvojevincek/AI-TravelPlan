@@ -7,9 +7,8 @@ import ExactLocation from "../components/ExactLocation";
 import ChangeMeBtn from "../components/ChangeMeBtn";
 import { useSession } from "next-auth/react";
 import { redirect, useSearchParams } from "next/navigation";
-import { RedirectType } from "next/dist/client/components/redirect";
-import Link from "next/link";
 import SavePlanButton from "../components/SavePlanButton";
+import SavePlanModal from "../components/SavePlanModal";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -17,6 +16,7 @@ function ResultsPage() {
   const searchParams = useSearchParams();
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function search() {
     const result = await fetch(
@@ -31,12 +31,14 @@ function ResultsPage() {
     search();
   }, []);
 
-  async function handleSave() {
+  async function handleSave(hasBeenChecked: boolean, update = false) {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
       email: session?.user?.email,
       response: result,
+      hasBeenChecked,
+      update,
     });
     const requestOptions = {
       method: "POST",
@@ -48,7 +50,11 @@ function ResultsPage() {
       requestOptions
     );
     if (isSaved.status === 200) {
-      alert("Plan saved correctly!");
+      const saved = await isSaved.json();
+      alert(saved.message);
+    }
+    if (isSaved.status === 201) {
+      setIsModalOpen(true);
     }
   }
 
@@ -101,6 +107,15 @@ function ResultsPage() {
           <div />
         )}
       </div>
+      {isModalOpen && (
+        <SavePlanModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          destination={destination || ""}
+          duration={duration || ""}
+          handleSave={handleSave}
+        />
+      )}
     </div>
   );
 }

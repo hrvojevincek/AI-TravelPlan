@@ -1,13 +1,17 @@
-import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-function SavePlanButton({ handleSave }: { handleSave: () => void }) {
+function SavePlanButton({
+  handleSave,
+}: {
+  handleSave: (hasBeenChecked: boolean) => void;
+}) {
   const { data: session } = useSession();
   return (
     <>
       {session?.user ? (
         <button
-          onClick={handleSave}
+          onClick={() => handleSave(false)}
           className="flex p-2 w-fit rounded-xl bg-yellow-400 text-white gap-2"
         >
           Save{" "}
