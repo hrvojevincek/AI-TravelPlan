@@ -6,6 +6,7 @@ import Button from "./components/Button";
 import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import LoadingPage from "./loading";
 import { Select, SelectProps } from "antd";
 
 export default function Home() {

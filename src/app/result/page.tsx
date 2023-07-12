@@ -5,13 +5,15 @@ import { ResultData } from "@/types";
 import Map from "../components/Map";
 import ExactLocation from "../components/ExactLocation";
 import ChangeMeBtn from "../components/ChangeMeBtn";
+import LoadingPage from "../loading";
 import { useSession } from "next-auth/react";
-import { redirect, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import SavePlanButton from "../components/SavePlanButton";
 import SavePlanModal from "../components/SavePlanModal";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const destination = searchParams.get("destination");
@@ -26,11 +28,16 @@ function ResultsPage() {
     );
     const responseData = await result.json();
     setResult(responseData);
+    setLoading(false);
   }
 
   useEffect(() => {
     search();
   }, []);
+
+  if (loading) {
+    return <LoadingPage />;
+  }
 
   async function handleSave(hasBeenChecked: boolean, update = false) {
     const myHeaders = new Headers();
