@@ -11,6 +11,7 @@ type GPTClientStrategy = {
 type searchProps = {
   destination: string;
   duration: string;
+  preferences?: string | null;
 };
 
 type editProps = {
@@ -56,7 +57,7 @@ class GPTClient {
   }
 
   public parseChatGPT(result: string) {
-    console.log("PARSE FUNCTION", result);
+
     return result
       .split("%%%")
       .filter((a) => a.trim())
@@ -78,27 +79,17 @@ class GPTClient {
 }
 
 class MockGPTStrategy implements GPTClientStrategy {
-  async predict({ destination, duration }: searchProps): Promise<any> {
-    // Return your mock data here
-    const search = await prisma.search.findFirst({
-      where: {
-        destination: destination.toLowerCase(),
-        duration: parseInt(duration),
-      },
-    });
-    if (search?.response) {
-      const data = JSON.parse(search?.response);
-      data?.forEach((data: Activity[]) =>
-        data.forEach((item) => {
-          return client.uniqueActivities.push(item["activity name"]);
-        })
-      );
-      console.log(client.uniqueActivities);
+  async predict({
+    destination,
+    duration,
+    preferences,
+  }: searchProps): Promise<any> {
 
-      return data;
-    }
-
-    const responsePrompt = `${duration} day trip to ${destination}. Use "%%%" for delimiting days.
+    const prefText =
+      preferences !== "null"
+        ? `, when choosing activities take into account I like ${preferences}`
+        : "";
+    const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
     the result should be formatted in this way:
     Day x:
     ---
@@ -125,6 +116,45 @@ class MockGPTStrategy implements GPTClientStrategy {
     
     Answer after the ampersands line
     &&&&&&&`;
+
+    if (preferences !== "null") {
+      const prefResponse = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: responsePrompt,
+        temperature: 1,
+        max_tokens: 800,
+      });
+      //if (userInfo) connect to user table
+      if (prefResponse.data.choices[0].text !== undefined) {
+        const prefResponseObject = client.parseChatGPT(
+          prefResponse.data.choices[0].text
+        );
+        prefResponseObject.forEach((day: Activity[]) => {
+          day.forEach((activity: Activity) => {
+            client.uniqueActivities.push(activity["activity name"]);
+          });
+        });
+
+        return prefResponseObject;
+      }
+    }
+    // Return your mock data here
+    const search = await prisma.search.findFirst({
+      where: {
+        destination: destination.toLowerCase(),
+        duration: parseInt(duration),
+      },
+    });
+    if (search?.response) {
+      const data = JSON.parse(search?.response);
+      data?.forEach((data: Activity[]) =>
+        data.forEach((item) => {
+          return client.uniqueActivities.push(item["activity name"]);
+        })
+      );
+
+      return data;
+    }
 
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
@@ -162,7 +192,6 @@ class MockGPTStrategy implements GPTClientStrategy {
       client.uniqueActivities,
       activityNamesArray
     );
-    console.log(client.uniqueActivities);
 
     try {
       const prompt = `suggest me another activity, but IT MUST NOT BE any of this: ${client.uniqueActivities.toString()}. Make it in the same ${destination} with duration ${duration}, the times CAN NOT overlap with other durations that day. Response should be in stricly JSON format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line and dont forget DONT FORGET QUOTATION MARKS, BRACKETS!!! : [{"activity name": answer, "duration": answer(24 hour format-24 hour format), "address": answer}]`;
