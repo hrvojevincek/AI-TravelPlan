@@ -57,7 +57,6 @@ class GPTClient {
   }
 
   public parseChatGPT(result: string) {
-
     return result
       .split("%%%")
       .filter((a) => a.trim())
@@ -84,11 +83,11 @@ class MockGPTStrategy implements GPTClientStrategy {
     duration,
     preferences,
   }: searchProps): Promise<any> {
-
     const prefText =
       preferences !== "null"
         ? `, when choosing activities take into account I like ${preferences}`
         : "";
+
     const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
     the result should be formatted in this way:
     Day x:
@@ -118,6 +117,24 @@ class MockGPTStrategy implements GPTClientStrategy {
     &&&&&&&`;
 
     if (preferences !== "null") {
+      const savedPrefSearch = await prisma.search.findFirst({
+        where: {
+          destination: destination.toLowerCase(),
+          duration: parseInt(duration),
+          preferences: { equals: preferences?.split(", ").sort() },
+        },
+      });
+
+      if (savedPrefSearch) {
+        const parsedPrefSearch = JSON.parse(savedPrefSearch.response);
+        parsedPrefSearch.forEach((data: Activity[]) =>
+          data.forEach((item) => {
+            return client.uniqueActivities.push(item["activity name"]);
+          })
+        );
+        return parsedPrefSearch;
+      }
+
       const prefResponse = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: responsePrompt,
@@ -129,6 +146,16 @@ class MockGPTStrategy implements GPTClientStrategy {
         const prefResponseObject = client.parseChatGPT(
           prefResponse.data.choices[0].text
         );
+
+        const newPrefSearch = await prisma.search.create({
+          data: {
+            destination: destination.toLowerCase(),
+            duration: parseInt(duration),
+            response: JSON.stringify(prefResponseObject),
+            preferences: preferences?.split(", ").sort(),
+          },
+        });
+
         prefResponseObject.forEach((day: Activity[]) => {
           day.forEach((activity: Activity) => {
             client.uniqueActivities.push(activity["activity name"]);
@@ -145,6 +172,8 @@ class MockGPTStrategy implements GPTClientStrategy {
         duration: parseInt(duration),
       },
     });
+    console.log("search", search);
+    console.log("response", search?.preferences);
     if (search?.response) {
       const data = JSON.parse(search?.response);
       data?.forEach((data: Activity[]) =>

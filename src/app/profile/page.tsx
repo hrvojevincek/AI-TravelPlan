@@ -11,6 +11,8 @@ export default function profilePage() {
       user={session.user as { name: string; image: string; email: string }}
     />
   ) : (
-    <h1>CARGA HIJO DE PUTA</h1>
+    <div className="flex h-screen w-screen content-center justify-center">
+      <h1>Loading Profile...</h1>
+    </div>
   );
 }
