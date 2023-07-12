@@ -6,6 +6,7 @@ import { platform } from "os";
 import client from "../api/GPTClient";
 import PlanCard from "../components/PlanCard";
 import Link from "next/link";
+import Search from "antd/es/input/Search";
 
 async function profile() {
   const session = await getServerSession(options);
@@ -121,7 +122,7 @@ async function profile() {
           {savedPlans.map((plan: any, pIndex: number) => {
             return (
               <Link
-                href={`/result?destination=${plan?.destination}&duration=${plan?.duration}`}
+                href={`/result?searchId=${plan.id}&duration=${plan.duration}&destination=${plan.destination}`}
               >
                 <div className="inline-block">
                   <div className="flex flex-col bg-white m-auto p-auto">

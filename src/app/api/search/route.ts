@@ -7,6 +7,15 @@ export async function GET(request: Request) {
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
   const preferences = searchParams.get("preferences");
+  const searchId = searchParams.get("searchId");
+  if (searchId !== "null" && searchId !== null) {
+    const savedPlan = await prisma.search.findUnique({
+      where: {
+        id: searchId,
+      },
+    });
+    return NextResponse.json(JSON.parse(savedPlan?.response as string));
+  }
 
   if (destination !== null && duration !== null) {
     const response = await client.predict({
