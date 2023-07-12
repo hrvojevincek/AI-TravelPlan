@@ -7,6 +7,7 @@ async function main() {
       {
         destination: "barcelona",
         duration: 3,
+        preferences: [],
         response: JSON.stringify([
           [
             {
@@ -64,6 +65,7 @@ async function main() {
       {
         destination: "london",
         duration: 3,
+        preferences: [],
         response: JSON.stringify([
           [
             {
@@ -121,6 +123,7 @@ async function main() {
       {
         destination: "new york",
         duration: 3,
+        preferences: [],
         response: JSON.stringify([
           [
             {
@@ -178,6 +181,7 @@ async function main() {
       {
         destination: "paris",
         duration: 4,
+        preferences: [],
         response: JSON.stringify([
           [
             {

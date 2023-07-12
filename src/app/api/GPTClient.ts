@@ -170,6 +170,9 @@ class MockGPTStrategy implements GPTClientStrategy {
       where: {
         destination: destination.toLowerCase(),
         duration: parseInt(duration),
+        preferences: {
+          isEmpty: true,
+        },
       },
     });
     console.log("search", search);
@@ -200,6 +203,7 @@ class MockGPTStrategy implements GPTClientStrategy {
           duration: parseInt(duration),
           destination: destination.toLowerCase(),
           response: JSON.stringify(responseObject),
+          preferences: [],
         },
       });
       responseObject.forEach((day: Activity[]) => {
