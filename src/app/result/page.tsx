@@ -19,9 +19,20 @@ function ResultsPage() {
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
   const preferences = searchParams.get("preferences");
+  const searchId = searchParams.get("searchId");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function search() {
+    console.log(typeof searchId);
+    if (searchId !== null) {
+      const savedResult = await fetch(`/api/search?searchId=${searchId}`, {
+        headers: { "Content-Type": "application/json" },
+      });
+      const savedResultData = await savedResult.json();
+      setResult(savedResultData);
+      setLoading(false);
+      return;
+    }
     const result = await fetch(
       `/api/search?destination=${destination}&duration=${duration}&preferences=${preferences}`,
       { headers: { "Content-Type": "application/json" } }
