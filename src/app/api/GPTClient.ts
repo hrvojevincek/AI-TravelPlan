@@ -1,6 +1,7 @@
-import { Activity, ResultData, ResultEdit } from "@/types";
+import { Activity, Day, ResultData, ResultEdit } from "@/types";
 import prisma from "../../../db";
 import openai from "../../../openai";
+import { json } from "stream/consumers";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -10,6 +11,7 @@ type GPTClientStrategy = {
 type searchProps = {
   destination: string;
   duration: string;
+  preferences?: string | null;
 };
 
 type editProps = {
@@ -53,10 +55,89 @@ class GPTClient {
       activityNamesArray.filter((item) => !uniqueActivities.includes(item))
     );
   }
+
+  public parseChatGPT(result: string) {
+
+    return result
+      .split("%%%")
+      .filter((a) => a.trim())
+      .map((day) => {
+        day = day.split("---\n")[1];
+        return day
+          .split("$$$")
+          .map((e) => e.trim())
+          .map((a) => {
+            const [name, time, address] = a.split("\n");
+            return {
+              "activity name": name,
+              duration: time,
+              address,
+            };
+          });
+      });
+  }
 }
 
 class MockGPTStrategy implements GPTClientStrategy {
-  async predict({ destination, duration }: searchProps): Promise<any> {
+  async predict({
+    destination,
+    duration,
+    preferences,
+  }: searchProps): Promise<any> {
+
+    const prefText =
+      preferences !== "null"
+        ? `, when choosing activities take into account I like ${preferences}`
+        : "";
+    const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
+    the result should be formatted in this way:
+    Day x:
+    ---
+    <Breakfast restaurant or bar>
+    <Breakfast time and duration>
+    <Breakfast address>
+    $$$
+    <Activity #1 name>
+    <Activity #1 time and duration>
+    <Activity #1 address>
+    $$$
+    <Lunch restaurant or bar>
+    <Lunch time and duration>
+    <Lunch address>
+    $$$
+    <Activity #2 name>
+    <Activity #2 time and duration>
+    <Activity #2 address>
+    $$$
+    <Dinner restaurant or bar>
+    <Dinner time and duration>
+    <Dinner address>
+    %%%
+    
+    Answer after the ampersands line
+    &&&&&&&`;
+
+    if (preferences !== "null") {
+      const prefResponse = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: responsePrompt,
+        temperature: 1,
+        max_tokens: 800,
+      });
+      //if (userInfo) connect to user table
+      if (prefResponse.data.choices[0].text !== undefined) {
+        const prefResponseObject = client.parseChatGPT(
+          prefResponse.data.choices[0].text
+        );
+        prefResponseObject.forEach((day: Activity[]) => {
+          day.forEach((activity: Activity) => {
+            client.uniqueActivities.push(activity["activity name"]);
+          });
+        });
+
+        return prefResponseObject;
+      }
+    }
     // Return your mock data here
     const search = await prisma.search.findFirst({
       where: {
@@ -71,43 +152,34 @@ class MockGPTStrategy implements GPTClientStrategy {
           return client.uniqueActivities.push(item["activity name"]);
         })
       );
-      console.log(client.uniqueActivities);
 
       return data;
     }
 
-    const prompt = `${duration} day trip to ${destination}. response should be in json format (an array of ${duration} day arrays with 3 activity objects) only add answers where it says answer and they should have the format stated inside the parenthesis. when choosing activities try and include the most known ones of the city. durations for activities inside the same activity array must not overlap, they should only show times where attractions are open or between 9am & 6pm. THE FORMAT: [[{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format), "address": answer(for the location of the activity) },{"activity name": answer,"duration": answer(24 hour format-24 hour format),"address": answer(for the location of the activity)}]]`;
-    // if (userInfo) connect to user table
-
-    const prompt2 = `${duration} day trip to ${destination}: please provide a detailed itinerary. Each day should consist of three unique major activities or attractions, dont make them repeat. Each activity should include the name, duration (24-hour format), and the address. The proposed activities should be popular and well-known in the given destination. Please ensure that the times for the activities do not overlap and take into consideration the opening hours of the attractions, which are usually between 9am and 6pm. The response should be structured in a stricly JSON format, in the following structure: [[{"activity name": (activity name here), "duration": (activity duration here in 24-hour format), "address": (activity location here)}, {and so on for 2 more activities}], [and so on for the number of days]], DONT FORGET QUOTATION MARKS, BRACKETS!!!`;
-
     //OPEN API KEY REQUEST
     const response = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: prompt2,
+      prompt: responsePrompt,
       temperature: 1,
       max_tokens: 800,
     });
     //if (userInfo) connect to user table
     if (response.data.choices[0].text !== undefined) {
+      const responseObject = client.parseChatGPT(response.data.choices[0].text);
       const savedSearch = await prisma.search.create({
         data: {
           duration: parseInt(duration),
           destination: destination.toLowerCase(),
-          response: response.data.choices[0].text,
+          response: JSON.stringify(responseObject),
         },
       });
+      responseObject.forEach((day: Activity[]) => {
+        day.forEach((activity: Activity) => {
+          client.uniqueActivities.push(activity["activity name"]);
+        });
+      });
 
-      const data = JSON.parse(response.data.choices[0].text);
-
-      data?.forEach((data: Activity[]) =>
-        data.forEach((item) =>
-          client.uniqueActivities.push(item["activity name"])
-        )
-      );
-      console.log(client.uniqueActivities);
-
-      return data;
+      return responseObject;
     }
   }
 
@@ -120,7 +192,6 @@ class MockGPTStrategy implements GPTClientStrategy {
       client.uniqueActivities,
       activityNamesArray
     );
-    console.log(client.uniqueActivities);
 
     try {
       const prompt = `suggest me another activity, but IT MUST NOT BE any of this: ${client.uniqueActivities.toString()}. Make it in the same ${destination} with duration ${duration}, the times CAN NOT overlap with other durations that day. Response should be in stricly JSON format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line and dont forget DONT FORGET QUOTATION MARKS, BRACKETS!!! : [{"activity name": answer, "duration": answer(24 hour format-24 hour format), "address": answer}]`;

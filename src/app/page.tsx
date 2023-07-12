@@ -1,6 +1,5 @@
 "use client";
 import { SearchData } from "@/types";
-import { useDataContext } from "./dataContext";
 import Link from "next/link";
 // import { default as Video } from "./components/Video";
 import Button from "./components/Button";
@@ -8,11 +7,44 @@ import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import LoadingPage from "./loading";
+import { Select, SelectProps } from "antd";
 
 export default function Home() {
   const { data: session } = useSession();
 
-  const { setData } = useDataContext();
+  const [searchData, setSearchData] = useState<SearchData>({});
+
+  const options: SelectProps["options"] = [
+    {
+      label: "art",
+      value: "art",
+    },
+    {
+      label: "architecture",
+      value: "architecture",
+    },
+    {
+      label: "beaches",
+      value: "beaches",
+    },
+    {
+      label: "musseums",
+      value: "musseums",
+    },
+    {
+      label: "nature",
+      value: "nature",
+    },
+    {
+      label: "sports",
+      value: "sports",
+    },
+  ];
+  const handleChange = (value: string[]) => {
+    setSearchData((prev) => {
+      return { ...prev, preferences: value.join(", ") };
+    });
+  };
 
   return (
     <>
@@ -42,7 +74,7 @@ export default function Home() {
                 <div className="mt-3">
                   <input
                     onChange={(e) => {
-                      setData((prev: SearchData | null) => {
+                      setSearchData((prev) => {
                         return { ...prev, destination: e.target.value };
                       });
                     }}
@@ -68,7 +100,7 @@ export default function Home() {
                 <div className="mt-2">
                   <input
                     onChange={(e) => {
-                      setData((prev: SearchData | null) => {
+                      setSearchData((prev) => {
                         return { ...prev, duration: e.target.value };
                       });
                     }}
@@ -81,9 +113,33 @@ export default function Home() {
                   />
                 </div>
               </div>
-
+              {session?.user && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor=""
+                      className="block text-md font-bold leading-6 text-white"
+                    >
+                      AND PREFERENCES
+                    </label>
+                  </div>
+                  <div className="mt-2">
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      style={{ width: "100%" }}
+                      placeholder="Select preferences"
+                      value={searchData.preferences?.split(", ")}
+                      onChange={handleChange}
+                      options={options}
+                    />
+                  </div>
+                </div>
+              )}
               <div className="bg-black text-white">
-                <Link href="/result">
+                <Link
+                  href={`/result?${new URLSearchParams(searchData).toString()}`}
+                >
                   <button
                     // href="/result"
                     type="submit"
