@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import SavePlanButton from "../components/SavePlanButton";
 import SavePlanModal from "../components/SavePlanModal";
+import { useLocalStorage } from "@/utils/hooks";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -19,11 +20,14 @@ function ResultsPage() {
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
   const preferences = searchParams.get("preferences");
-  const searchId = searchParams.get("searchId");
+  let searchId = searchParams.get("searchId");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [localSearchId, setLocalSearchId] = useLocalStorage(
+    "TravelAISearchId",
+    null
+  );
 
   async function search() {
-    console.log(typeof searchId);
     if (searchId !== null) {
       const savedResult = await fetch(`/api/search?searchId=${searchId}`, {
         headers: { "Content-Type": "application/json" },
@@ -51,6 +55,16 @@ function ResultsPage() {
   }
 
   async function handleSave(hasBeenChecked: boolean, update = false) {
+    if (localSearchId !== null) {
+      searchId = localSearchId;
+    }
+    if (searchId !== null && isModalOpen === false) {
+      setIsModalOpen(true);
+      return;
+    }
+    if (localSearchId !== null) {
+      searchId = localSearchId;
+    }
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
@@ -65,14 +79,18 @@ function ResultsPage() {
       body: raw,
     };
     const isSaved = await fetch(
-      `/api/search?destination=${destination}&duration=${duration}`,
+      `/api/search?destination=${destination}&duration=${duration}&searchId=${searchId}`,
       requestOptions
     );
+    const saved = await isSaved.json();
     if (isSaved.status === 200) {
-      const saved = await isSaved.json();
       alert(saved.message);
+      if (saved.searchId) {
+        setLocalSearchId(saved.searchId);
+      }
     }
     if (isSaved.status === 201) {
+      setLocalSearchId(saved.searchId);
       setIsModalOpen(true);
     }
   }

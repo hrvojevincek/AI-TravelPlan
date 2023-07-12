@@ -32,8 +32,43 @@ export async function POST(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const destination = searchParams.get("destination");
     const duration = searchParams.get("duration");
+    const searchId = searchParams.get("searchId");
     const req = await request.json();
     const { email, response, hasBeenChecked, update } = req;
+    console.log("THIS IS SEARCHID ==>>", searchId);
+    if (
+      searchId !== null &&
+      searchId !== "null" &&
+      request.body !== null &&
+      destination !== null &&
+      duration !== null
+    ) {
+      if (update) {
+        const updatedSearchIdPlan = await prisma.search.update({
+          where: {
+            id: searchId,
+          },
+          data: {
+            response: JSON.stringify(response),
+          },
+        });
+        return NextResponse.json({ message: "Plan updated correctly!" });
+      }
+      if (!update) {
+        const newSearchIdPlan = await prisma.search.create({
+          data: {
+            destination: destination.toLowerCase(),
+            duration: parseInt(duration),
+            response: JSON.stringify(response),
+            user: { connect: { email: email } },
+          },
+        });
+        return NextResponse.json({
+          message: "New plan saved correctly!",
+          searchId: newSearchIdPlan.id,
+        });
+      }
+    }
     if (request.body !== null && destination !== null && duration !== null) {
       const existingPlan = await prisma.search.findMany({
         where: {
@@ -45,22 +80,12 @@ export async function POST(request: NextRequest) {
 
       if (existingPlan.length > 0 && !hasBeenChecked) {
         return NextResponse.json(
-          { message: "already has existing Plan" },
+          {
+            message: "already has existing Plan",
+            searchId: existingPlan[0].id,
+          },
           { status: 201 }
         );
-      }
-      if (update) {
-        const updatedPlan = await prisma.search.updateMany({
-          where: {
-            destination: destination?.toLocaleLowerCase(),
-            duration: parseInt(duration),
-            user: { email: email },
-          },
-          data: {
-            response: JSON.stringify(response),
-          },
-        });
-        return NextResponse.json({ message: "Plan updated correctly!" });
       }
       const newUserPlan = await prisma.search.create({
         data: {
@@ -70,8 +95,11 @@ export async function POST(request: NextRequest) {
           user: { connect: { email: email } },
         },
       });
+      return NextResponse.json({
+        message: "New plan saved correctly!",
+        searchId: newUserPlan.id,
+      });
     }
-    return NextResponse.json({ message: "New plan saved correctly!" });
   } catch (e) {
     console.log(e);
   }
