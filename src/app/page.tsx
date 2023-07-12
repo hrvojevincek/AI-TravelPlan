@@ -8,11 +8,17 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import LoadingPage from "./loading";
 import { Select, SelectProps } from "antd";
+import { useLocalStorage } from "@/utils/hooks";
 
 export default function Home() {
   const { data: session } = useSession();
 
   const [searchData, setSearchData] = useState<SearchData>({});
+
+  const [localSearchId, setLocalSearchId] = useLocalStorage(
+    "TravelAISearchId",
+    null
+  );
 
   const options: SelectProps["options"] = [
     {
@@ -62,6 +68,7 @@ export default function Home() {
               method="POST"
               onSubmit={(e) => {
                 e.preventDefault();
+                setLocalSearchId(null);
               }}
             >
               <div>
