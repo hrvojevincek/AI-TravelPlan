@@ -1,6 +1,7 @@
 export type SearchData = {
   destination?: string;
   duration?: string;
+  preferences?: string
 };
 
 export type ResultEdit = Activity;

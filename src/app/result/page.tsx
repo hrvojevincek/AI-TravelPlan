@@ -16,11 +16,12 @@ function ResultsPage() {
   const searchParams = useSearchParams();
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
+  const preferences = searchParams.get("preferences");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function search() {
     const result = await fetch(
-      `/api/search?destination=${destination}&duration=${duration}`,
+      `/api/search?destination=${destination}&duration=${duration}&preferences=${preferences}`,
       { headers: { "Content-Type": "application/json" } }
     );
     const responseData = await result.json();

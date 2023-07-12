@@ -6,11 +6,13 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
+  const preferences = searchParams.get("preferences");
 
   if (destination !== null && duration !== null) {
     const response = await client.predict({
       destination,
       duration,
+      preferences,
     });
     return NextResponse.json(response);
   }
@@ -26,12 +28,12 @@ export async function POST(request: NextRequest) {
     if (request.body !== null && destination !== null && duration !== null) {
       const existingPlan = await prisma.search.findMany({
         where: {
-          destination: destination?.toLocaleLowerCase(),
+          destination: destination?.toLowerCase(),
           duration: parseInt(duration),
           user: { email: email },
         },
       });
-      console.log("EXISTINGPLAN ==>>", existingPlan);
+
       if (existingPlan.length > 0 && !hasBeenChecked) {
         return NextResponse.json(
           { message: "already has existing Plan" },
