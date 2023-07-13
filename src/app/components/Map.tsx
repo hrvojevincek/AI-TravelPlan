@@ -133,6 +133,8 @@ const Map: React.FC<MapProps> = ({
         .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}&libraries=${library}`}
     >
       <GoogleMap
+        options={{ mapId: "cac5a755419882c6" }}
+        mapContainerClassName="z-1"
         mapContainerStyle={containerStyle}
         center={center}
         zoom={5}

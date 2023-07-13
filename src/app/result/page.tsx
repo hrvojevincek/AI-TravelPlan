@@ -155,7 +155,7 @@ function ResultsPage() {
           );
         })}
       </div>
-      <div className="flex-grow">
+      <div className=" flex-grow">
         <DetailsCard cardInfo={selectedCardInfo} />
         {result.length > 0 ? (
           //pass event
