@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "../GPTClient";
 import prisma from "../../../../db";
+import * as Unsplash from "@/lib/unsplash";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -55,12 +56,15 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Plan updated correctly!" });
       }
       if (!update) {
+        const image = await Unsplash.getRandomPhoto(destination.toLowerCase());
+        console.log("image", image);
         const newSearchIdPlan = await prisma.search.create({
           data: {
             destination: destination.toLowerCase(),
             duration: parseInt(duration),
             response: JSON.stringify(response),
             user: { connect: { email: email } },
+            image,
           },
         });
         return NextResponse.json({

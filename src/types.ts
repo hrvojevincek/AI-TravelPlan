@@ -1,12 +1,22 @@
 export type SearchData = {
   destination?: string;
   duration?: string;
-  preferences?: string
+  preferences?: string;
 };
 
 export type ResultEdit = Activity;
 
 export type ResultData = Day[];
+
+export type Search = {
+  id: number;
+  destination: string;
+  duration: number;
+  response: string;
+  user: User;
+  preferences: string[];
+  image?: string;
+};
 
 export type Day = Activity[];
 

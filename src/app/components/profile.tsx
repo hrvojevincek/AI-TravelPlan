@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useLocalStorage } from "@/utils/hooks";
 
 import { useEffect, useState } from "react";
-import { ResultData } from "@/types";
+import { ResultData, Search } from "@/types";
 
 function Profile({
   user,
@@ -16,7 +16,7 @@ function Profile({
     "TravelAISearchId",
     null
   );
-  const [savedPlans, setSavedPlans] = useState<ResultData[]>([]);
+  const [savedPlans, setSavedPlans] = useState<Search[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function getSavedPlans() {
