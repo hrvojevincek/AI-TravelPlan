@@ -134,6 +134,8 @@ function ResultsPage() {
                     <div>{activity["activity name"]}</div>
                     <div>{activity.duration}</div>
                     <ChangeMeBtn
+                      setSelectedActivity={setSelectedActivity}
+                      setActivities={setActivities}
                       setResult={setResult}
                       duration={activity.duration}
                       destination={destination ? destination : undefined}
@@ -160,7 +162,6 @@ function ResultsPage() {
         {result.length > 0 ? (
           //pass event
           <Map
-            key={activities.map((act) => act["activity name"]).join()}
             setCardsInfo={setCardsInfo}
             activities={activities}
             selectedActivity={selectedActivity}

@@ -11,7 +11,7 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
       <Link
         href={cardInfo?.result ? cardInfo.result.url : ""}
         target="_blank"
-        className="flex flex-col items-center bg-white border border-gray-100 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+        className="flex flex-col items-center bg-gray-800 border border-gray-100 rounded-lg shadow md:flex-row md:max-w-xl   bg-gray-700"
       >
         <img
           className=" m-3 object-cover w-full rounded-lg h-96 md:h-auto md:w-48"
@@ -25,10 +25,10 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
           }
         />
         <div className="flex flex-col justify-between p-4 leading-normal">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-white dark:text-white">
             {cardInfo?.id}
           </h5>
-          <p className="mb-3 font-normal text-gray-100 dark:text-gray-400">
+          <p className="mb-3 font-normal text-gray-100 text-white">
             {cardInfo
               ? cardInfo?.result?.editorial_summary?.overview
               : "NO INFO SORRY"}

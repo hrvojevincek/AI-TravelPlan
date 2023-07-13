@@ -62,7 +62,7 @@ const Map: React.FC<MapProps> = ({
             lat,
             lng,
             icon: {
-              url: `http://maps.google.com/mapfiles/ms/icons/red-dot.png`,
+              url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
             },
           });
           const cardData = await getPlaceId(
@@ -112,14 +112,14 @@ const Map: React.FC<MapProps> = ({
           return {
             ...m,
             icon: {
-              url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
             },
           };
         } else {
           return {
             ...m,
             icon: {
-              url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+              url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
             },
           };
         }
