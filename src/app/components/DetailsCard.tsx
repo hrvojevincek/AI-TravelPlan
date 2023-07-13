@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 function DetailsCard({ cardInfo }: { cardInfo: any }) {
@@ -7,12 +8,13 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
 
   return (
     <div className="z-10 absolute bottom-10 right-10">
-      <a
-        href="#"
+      <Link
+        href={cardInfo?.result ? cardInfo.result.url : ""}
+        target="_blank"
         className="flex flex-col items-center bg-white border border-gray-100 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
       >
         <img
-          className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+          className=" m-3 object-cover w-full rounded-lg h-96 md:h-auto md:w-48"
           alt=""
           src={
             cardInfo.result?.photos
@@ -33,7 +35,7 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
             {cardInfo ? cardInfo?.result?.rating : "NO INFO SORRY"}
           </p>
         </div>
-      </a>
+      </Link>
     </div>
   );
 }
