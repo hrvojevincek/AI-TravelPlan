@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import options from "./options";
-import { signIn } from "next-auth/react";
 
 // Initialize NextAuth
 

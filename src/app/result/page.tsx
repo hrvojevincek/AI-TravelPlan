@@ -11,6 +11,8 @@ import { useSearchParams } from "next/navigation";
 import SavePlanButton from "../components/SavePlanButton";
 import SavePlanModal from "../components/SavePlanModal";
 import { useLocalStorage } from "@/utils/hooks";
+import getPlaceId from "@/utils/getPlaceId";
+import DetailsCard from "../components/DetailsCard";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -27,12 +29,14 @@ function ResultsPage() {
     null
   );
   const [activities, setActivities] = useState<Activity[]>([]);
-  let tryResult: any;
-
   const [selectedActivity, setSelectedActivity] = useState<string>("");
-
+  const [cardsInfo, setCardsInfo] = useState([]);
+  const [selectedCardInfo, setSelectedCardInfo] = useState({});
   const onHandleSelectedActivity = (id: string) => {
     setSelectedActivity(id);
+    const cardInfo = cardsInfo.find((el: any) => el.id === id);
+    console.log(cardInfo);
+    setSelectedCardInfo(cardInfo!);
   };
 
   async function search() {
@@ -152,9 +156,11 @@ function ResultsPage() {
         })}
       </div>
       <div className="flex-grow">
+        <DetailsCard cardInfo={selectedCardInfo} />
         {result.length > 0 ? (
           //pass event
           <Map
+            setCardsInfo={setCardsInfo}
             activities={activities}
             selectedActivity={selectedActivity}
             handleSelectActivity={onHandleSelectedActivity}

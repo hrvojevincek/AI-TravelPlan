@@ -7,26 +7,38 @@ import {
 import type { Activity } from "@/types";
 import { geocodeAddress } from "../geocode";
 import { useState, useEffect, useRef, useCallback } from "react";
+import getPlaceId from "@/utils/getPlaceId";
 
-const containerStyle = {
+const library = "places";
+
+const containerStyle: React.CSSProperties = {
   width: "100%",
   height: "100vh",
 };
 
 type MapProps = {
+  setCardsInfo: (cardInfo: any) => void;
   activities: Activity[];
   selectedActivity?: string;
   handleSelectActivity: (id: string) => void;
 };
 
-const Map = ({
+type MarkerDataType = {
+  id: string;
+  lat: number;
+  lng: number;
+  icon?: { url: string };
+};
+
+const Map: React.FC<MapProps> = ({
+  setCardsInfo,
   activities,
   selectedActivity,
   handleSelectActivity,
-}: MapProps) => {
+}) => {
   const [center, setCenter] = useState({
-    lat: 0, // Latitud del centro del mapa
-    lng: 0, // Longitud del centro del mapa
+    lat: 0, // Lat map center
+    lng: 0, // Long map center
   });
 
   const mapRef = useRef<google.maps.Map>();
@@ -35,25 +47,13 @@ const Map = ({
     mapRef.current = mapInstance;
   }, []);
 
-  type Marker = {
-    id: string;
-    lat: number;
-    lng: number;
-    icon?: { url: string };
-  };
+  const [activityMarkers, setActivityMarkers] = useState<MarkerDataType[]>([]);
 
-  const [activityMarkers, setActivityMarkers] = useState<Marker[]>([]);
-
-  const [selectedMarker, setSelectedMarker] = useState<Marker>();
+  const [selectedMarker, setSelectedMarker] = useState<MarkerDataType>();
 
   useEffect(() => {
     const fetchActivityMarkers = async () => {
-      const markers: {
-        id: string;
-        lat: number;
-        lng: number;
-        icon: { url: string };
-      }[] = [];
+      const markers: MarkerDataType[] = [];
       for (const activity of activities) {
         try {
           const { lat, lng } = await geocodeAddress(activity.address);
@@ -65,6 +65,15 @@ const Map = ({
               url: `http://maps.google.com/mapfiles/ms/icons/red-dot.png`,
             },
           });
+          const cardData = await getPlaceId(
+            activity["activity name"],
+            activity.address
+          );
+
+          setCardsInfo((prev: any) => [
+            ...prev,
+            { ...cardData, id: activity["activity name"] },
+          ]);
         } catch (error) {
           console.error("Error geocoding address:", error);
         }
@@ -88,18 +97,18 @@ const Map = ({
   useEffect(() => {
     if (!selectedActivity) return;
 
-    const marker = activityMarkers.find(
+    const target = activityMarkers.find(
       (marker) => marker.id === selectedActivity
     );
-    if (!marker) return;
-    setSelectedMarker(marker);
+    if (!target) return;
+    setSelectedMarker(target);
     setCenter({
-      lat: marker.lat,
-      lng: marker.lng,
+      lat: target.lat,
+      lng: target.lng,
     });
     setActivityMarkers((markers) =>
       markers.map((m) => {
-        if (m.id === marker.id) {
+        if (m.id === target.id) {
           return {
             ...m,
             icon: {
@@ -118,17 +127,18 @@ const Map = ({
     );
   }, [selectedActivity]);
 
-  // my key AIzaSyAP7H0TvFg3Qsm-lQ8B2zPCIUnONcXiCJs
-
   return (
-    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+    <LoadScript
+      googleMapsApiKey={`${process.env
+        .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}&libraries=${library}`}
+    >
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={5}
         onLoad={handleMapLoad}
       >
-        {activityMarkers.map((marker: Marker) => {
+        {activityMarkers.map((marker: MarkerDataType) => {
           return (
             <Marker
               key={`marker-${marker.id}`}
