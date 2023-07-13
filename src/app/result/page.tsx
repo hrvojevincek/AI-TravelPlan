@@ -160,6 +160,7 @@ function ResultsPage() {
         {result.length > 0 ? (
           //pass event
           <Map
+            key={activities.map((act) => act["activity name"]).join()}
             setCardsInfo={setCardsInfo}
             activities={activities}
             selectedActivity={selectedActivity}

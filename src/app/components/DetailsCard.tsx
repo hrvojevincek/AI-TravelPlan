@@ -17,7 +17,7 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
           className=" m-3 object-cover w-full rounded-lg h-96 md:h-auto md:w-48"
           alt=""
           src={
-            cardInfo.result?.photos
+            cardInfo?.result?.photos
               ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${
                   cardInfo.result.photos[0].photo_reference
                 }&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}`
