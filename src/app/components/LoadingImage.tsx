@@ -28,7 +28,7 @@ const LoadingImage = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center">
+    <div className="flex justify-center items-center">
       <Image
         src={images[currentImageIndex]}
         layout="fill"
@@ -36,10 +36,15 @@ const LoadingImage = () => {
         alt="image"
         priority
       />
-      <div className="absolute inset-0 flex justify-center items-center">
-        <div className="bg-gray-700 bg-opacity-75 p-4 rounded-full">
-          <h1 className="text-yellow-400">
-            Planning your {duration} day trip to {capitalisedDestination}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute bg-gray-700 bg-opacity-75 rounded-full w-100 h-100"></div>
+        <div className="flex flex-col align-center items-center z-10">
+          <h1 className="font-bold  text-center text-5xl mb-10 text-yellow-400">
+            Planning your <br />
+            {duration} day
+            <br />
+            trip to <br />
+            {capitalisedDestination}
             ...
           </h1>
         </div>

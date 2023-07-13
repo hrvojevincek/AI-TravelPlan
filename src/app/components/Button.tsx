@@ -2,7 +2,13 @@
 import React from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-const Button = () => {
+const Button = ({
+  className,
+  ...props
+}: React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>) => {
   const { data: session } = useSession();
 
   if (session && session.user) {
@@ -16,7 +22,7 @@ const Button = () => {
     );
   }
   return (
-    <button onClick={() => signIn()} className="text-green-600 ml-auto">
+    <button onClick={() => signIn()} className={`${className}`} {...props}>
       Sign In
     </button>
   );

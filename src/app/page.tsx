@@ -1,19 +1,19 @@
 "use client";
 import { SearchData } from "@/types";
 import Link from "next/link";
-// import { default as Video } from "./components/Video";
-import Button from "./components/Button";
+import AuthButton from "./components/Button";
 import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import LoadingPage from "./loading";
 import { Select, SelectProps } from "antd";
 import { useLocalStorage } from "@/utils/hooks";
+import Image from "next/image";
 
 export default function Home() {
   const { data: session } = useSession();
-
   const [searchData, setSearchData] = useState<SearchData>({});
+  const image =
+    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80";
 
   const [localSearchId, setLocalSearchId] = useLocalStorage(
     "TravelAISearchId",
@@ -54,111 +54,100 @@ export default function Home() {
 
   return (
     <>
-      {/* <Video /> */}
-      <div className="flex flex-col md:flex-row top-0 absolute h-screen w-screen">
-        <div className="h-screen flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <h2 className="mt-3 mb-10 text-center text-5xl font-bold leading-9 tracking-tight text-white">
-            Welcome to Travel Plan
-          </h2>
+      {" "}
+      <div className="flex justify-center items-center">
+        <Image
+          src={image}
+          layout="fill"
+          objectFit="cover"
+          alt="plane wing in the sky"
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute bg-gray-700 bg-opacity-75 rounded-full w-100 h-100"></div>
+          <div className="flex flex-col align-center items-center z-10">
+            <h2 className="font-bold text-center text-5xl mb-10">
+              Let's start <br />
+              your journey
+            </h2>
 
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form
-              className="space-y-3"
-              action="#"
-              method="POST"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setLocalSearchId(null);
-              }}
-            >
-              <div>
-                <label
-                  htmlFor=""
-                  className="block text-md font-bold leading-5 text-white"
-                >
-                  ENTER YOUR DESTINATION
-                </label>
-                <div className="mt-3">
-                  <input
-                    onChange={(e) => {
-                      setSearchData((prev) => {
-                        return { ...prev, destination: e.target.value };
-                      });
-                    }}
-                    id="destination"
-                    name="destination"
-                    type="text"
-                    required
-                    placeholder="Barcelona"
-                    className="pl-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-3 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor=""
-                    className="block text-md font-bold leading-6 text-white"
-                  >
-                    AND DURATION
-                  </label>
-                </div>
-                <div className="mt-2">
-                  <input
-                    onChange={(e) => {
-                      setSearchData((prev) => {
-                        return { ...prev, duration: e.target.value };
-                      });
-                    }}
-                    id="duration"
-                    name="duration"
-                    type="text"
-                    placeholder="3-day trip"
-                    required
-                    className="pl-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-              {session?.user && (
+            <div className="mt-4">
+              <form
+                className="space-y-3"
+                action="#"
+                method="POST"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+              >
                 <div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor=""
-                      className="block text-md font-bold leading-6 text-white"
-                    >
-                      AND PREFERENCES
-                    </label>
-                  </div>
-                  <div className="mt-2">
-                    <Select
-                      mode="multiple"
-                      allowClear
-                      style={{ width: "100%" }}
-                      placeholder="Select preferences"
-                      value={searchData.preferences?.split(", ")}
-                      onChange={handleChange}
-                      options={options}
+                  <div className="mt-3">
+                    <input
+                      onChange={(e) => {
+                        setSearchData((prev) => {
+                          return { ...prev, destination: e.target.value };
+                        });
+                      }}
+                      id="destination"
+                      name="destination"
+                      type="text"
+                      required
+                      placeholder="Where do you want to go?"
+                      className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100"
                     />
                   </div>
                 </div>
-              )}
-              <div className="bg-black text-white">
-                <Link
-                  href={`/result?${new URLSearchParams(searchData).toString()}`}
-                >
-                  <button
-                    // href="/result"
-                    type="submit"
-                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300"
+
+                <div>
+                  <div className="mt-2">
+                    <input
+                      onChange={(e) => {
+                        setSearchData((prev) => {
+                          return { ...prev, duration: e.target.value };
+                        });
+                      }}
+                      id="duration"
+                      name="duration"
+                      type="text"
+                      placeholder="How many days for?"
+                      required
+                      className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100"
+                    />
+                  </div>
+                </div>
+                {session?.user && (
+                  <div>
+                    <div className="">
+                      <label htmlFor="" className="">
+                        AND PREFERENCES
+                      </label>
+                    </div>
+                    <div className="mt-2">
+                      <Select
+                        mode="multiple"
+                        allowClear
+                        style={{ width: "100%" }}
+                        placeholder="Select preferences"
+                        value={searchData.preferences?.split(", ")}
+                        onChange={handleChange}
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-4 flex items-center gap-8 justify-center">
+                  <Link
+                    href={`/result?${new URLSearchParams(
+                      searchData
+                    ).toString()}`}
+                    className="font-bold bg-yellow-400 p-2 px-4 text-white rounded-full"
                   >
                     Plan my trip
-                  </button>
-                </Link>
-              </div>
-            </form>
-            <div className="bg-white">
-              <Button />
+                  </Link>
+                  <AuthButton className="border border-yellow-400 text-yellow-400 p-2 px-4 rounded-full" />
+                </div>
+              </form>
+              <div className=""></div>
               {session && <UserCard user={session?.user} />}
             </div>
           </div>
