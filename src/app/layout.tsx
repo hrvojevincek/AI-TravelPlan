@@ -19,7 +19,10 @@ const futura = localFont({
   ],
 });
 
-const hind = Hind({ weight: ["300", "400", "500", "700"], subsets: ["latin"] });
+const hind = Hind({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+});
 
 export default function RootLayout({
   children,

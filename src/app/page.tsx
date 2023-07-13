@@ -2,12 +2,13 @@
 import { SearchData } from "@/types";
 import Link from "next/link";
 import AuthButton from "./components/Button";
-import { UserCard } from "./UserCard";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Select, SelectProps } from "antd";
 import { useLocalStorage } from "@/utils/hooks";
 import Image from "next/image";
+import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
+import VoyagoLogo from "../../public/voyago-logo.svg";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -55,29 +56,30 @@ export default function Home() {
   return (
     <>
       {" "}
-      <div className="flex justify-center items-center">
-        <Image
-          src={image}
-          layout="fill"
-          objectFit="cover"
-          alt="plane wing in the sky"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="absolute bg-gray-700 bg-opacity-75 rounded-full w-100 h-100"></div>
-          <div className="flex flex-col align-center items-center z-10">
-            <h2 className="font-bold text-center text-5xl mb-10">
-              Let's start <br />
-              your journey
+      <div className="flex flex-col justify-center items-center h-screen">
+        <div className="absolute h-full w-full">
+          <Image
+            src={image}
+            fill
+            className="object-cover"
+            alt="plane wing in the sky"
+          />
+        </div>
+
+        <Image src={VoyagoLogo} alt="Voyago Logo" className="relative mb-8" />
+
+        <div className="relative w-100 h-100">
+          <div className="absolute rounded-full w-full h-full bg-neutral-500 bg-opacity-10 backdrop-blur-md"></div>
+          <div className="relative h-100 flex flex-col justify-center items-center z-10">
+            <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
+              Let's start your journey
             </h2>
 
             <div className="mt-4">
               <form
                 className="space-y-3"
-                action="#"
-                method="POST"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                }}
+                action={`/result?${new URLSearchParams(searchData).toString()}`}
+                method="GET"
               >
                 <div>
                   <div className="mt-3">
@@ -92,7 +94,7 @@ export default function Home() {
                       type="text"
                       required
                       placeholder="Where do you want to go?"
-                      className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100"
+                      className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100 placeholder-icon-time"
                     />
                   </div>
                 </div>
@@ -110,18 +112,19 @@ export default function Home() {
                       type="text"
                       placeholder="How many days for?"
                       required
-                      className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100"
+                      className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100 placeholder-icon-time"
                     />
                   </div>
                 </div>
                 {session?.user && (
-                  <div>
-                    <div className="">
-                      <label htmlFor="" className="">
-                        AND PREFERENCES
-                      </label>
-                    </div>
-                    <div className="mt-2">
+                  <div className="mt-2">
+                    <label
+                      htmlFor=""
+                      className="font-semibold text-white drop-shadow-md tracking-tighter"
+                    >
+                      And preferences:
+                    </label>
+                    <div className="mt-1">
                       <Select
                         mode="multiple"
                         allowClear
@@ -135,23 +138,22 @@ export default function Home() {
                   </div>
                 )}
 
-                <div className="pt-4 flex items-center gap-8 justify-center">
+                <div className="pt-4 flex items-center gap-8 justify-between">
+                  <AuthButton className=" bg-yellow-400 text-white p-2 px-4 rounded-full" />
                   <Link
                     href={`/result?${new URLSearchParams(
                       searchData
                     ).toString()}`}
-                    className="font-bold bg-yellow-400 p-2 px-4 text-white rounded-full"
+                    className="font-bold bg-slate-900 p-2 px-8   text-white rounded-full"
                   >
-                    Plan my trip
+                    <ArrowLongRightIcon className="h-6 w-6 text-white" />
                   </Link>
-                  <AuthButton className="border border-yellow-400 text-yellow-400 p-2 px-4 rounded-full" />
                 </div>
               </form>
-              <div className=""></div>
-              {session && <UserCard user={session?.user} />}
             </div>
           </div>
         </div>
+        {/* {session && <UserCard user={session?.user} />} */}
       </div>
     </>
   );
