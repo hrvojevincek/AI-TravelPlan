@@ -25,4 +25,5 @@ model Search {
   userId      String?
   user        User?    @relation(fields: [userId], references: [id])
   preferences String[]
+  image       String?
 }

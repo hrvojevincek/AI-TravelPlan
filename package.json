@@ -17,6 +17,7 @@
     "test": "jest --ci --coverage"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@prisma/client": "^4.16.2",
     "@react-google-maps/api": "^2.18.1",
     "@types/node": "20.3.1",

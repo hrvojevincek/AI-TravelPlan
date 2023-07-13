@@ -1,10 +1,17 @@
+import { Search } from "@/types";
 import Card from "./Card";
 
-const PlanCard = ({ plan }: any) => {
+type PlanCardProps = {
+  plan: Search;
+};
+const PlanCard = ({ plan }: PlanCardProps) => {
   return (
-    <Card>
-      <h3 className="text-center">{plan.destination}</h3>
-      <h3 className="text-center">Duration: {plan.duration} days.</h3>
+    <Card
+      backgroundImage={plan.image}
+      className="p-4 flex flex-col justify-end h-full text-3xl font-bold tracking-tighter"
+    >
+      <p>{plan.destination}</p>
+      <p>{plan.duration} days.</p>
     </Card>
   );
 };
