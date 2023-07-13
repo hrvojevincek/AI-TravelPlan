@@ -68,9 +68,9 @@ export default function Home() {
 
         <Image src={VoyagoLogo} alt="Voyago Logo" className="relative mb-8" />
 
-        <div className="relative w-100 h-100">
+        <div className="relative w-[600px] h-[600px]">
           <div className="absolute rounded-full w-full h-full bg-neutral-500 bg-opacity-10 backdrop-blur-md"></div>
-          <div className="relative h-100 flex flex-col justify-center items-center z-10">
+          <div className="relative h-[600px] flex flex-col justify-center items-center z-10">
             <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
               Let's start your journey
             </h2>
