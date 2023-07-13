@@ -1,17 +1,18 @@
 import Link from "next/link";
 import React from "react";
 
-function DetailsCard({ cardInfo }: { cardInfo: any }) {
-  {
-    console.log(cardInfo);
-  }
+type DetailProp = {
+  selectedActivity: string;
+  cardInfo: any;
+};
 
+const DetailsCard: React.FC<DetailProp> = ({ cardInfo, selectedActivity }) => {
   return (
-    <div className="z-10 absolute bottom-10 right-10">
+    <div className="z-10 absolute right-20 bottom-20 ">
       <Link
         href={cardInfo?.result ? cardInfo.result.url : ""}
         target="_blank"
-        className="flex flex-col items-center bg-gray-800 border border-gray-100 rounded-lg shadow md:flex-row md:max-w-xl   bg-gray-700"
+        className="flex flex-col items-center border rounded-lg shadow md:flex-row md:max-w-xl  bg-orange-50"
       >
         <img
           className=" m-3 object-cover w-full rounded-lg h-96 md:h-auto md:w-48"
@@ -25,10 +26,10 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
           }
         />
         <div className="flex flex-col justify-between p-4 leading-normal">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-white dark:text-white">
-            {cardInfo?.id}
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-black">
+            {selectedActivity}
           </h5>
-          <p className="mb-3 font-normal text-gray-100 text-white">
+          <p className="mb-3 font-normal text-black">
             {cardInfo
               ? cardInfo?.result?.editorial_summary?.overview
               : "NO INFO SORRY"}
@@ -38,6 +39,6 @@ function DetailsCard({ cardInfo }: { cardInfo: any }) {
       </Link>
     </div>
   );
-}
+};
 
 export default DetailsCard;

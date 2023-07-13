@@ -232,7 +232,7 @@ class MockGPTStrategy implements GPTClientStrategy {
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 0.8,
+        temperature: 0.2,
         max_tokens: 350,
       });
       console.log("response data bro", response.data);
@@ -270,7 +270,7 @@ class RealGPTStrategy implements GPTClientStrategy {
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 1,
+        temperature: 0.5,
         max_tokens: 350,
       });
 

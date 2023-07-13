@@ -1,6 +1,8 @@
 "use client";
 
 import { Activity, Day, ResultData } from "@/types";
+import Image from "next/image";
+import refresh from "../../../public/refresh.svg";
 import { useState, useEffect } from "react";
 
 interface ChangeMeBtnProps {
@@ -81,11 +83,12 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
   }
 
   return (
-    <button
-      className="text-white bg-black font-semi py-1 px-2 rounded"
-      onClick={changeActivity}
-    >
-      Change this activity!
+    <button className="mr-4 hover:fill-gray-400" onClick={changeActivity}>
+      <Image
+        className="hover:fill-black"
+        alt="Change it!"
+        src={refresh}
+      ></Image>
     </button>
   );
 };

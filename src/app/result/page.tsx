@@ -14,6 +14,9 @@ import { useLocalStorage } from "@/utils/hooks";
 import getPlaceId from "@/utils/getPlaceId";
 import DetailsCard from "../components/DetailsCard";
 
+import logo from "../../../public/logo.svg";
+import Image from "next/image";
+
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -109,30 +112,22 @@ function ResultsPage() {
   }
 
   return (
-    <div className="flex h-screen w-screen ">
-      <div className="overflow-auto p-6 bg-white border border-gray-200 shadow">
-        <div className="flex justify-end w-full p-2 ">
+    <div className="bg-amber-100 flex h-screen w-screen ">
+      <div className="overflow-auto p-6 bg-amber-50">
+        <div className="flex justify-between w-full mb-10 ">
+          <Image src={logo} alt="Best company ever"></Image>
           <SavePlanButton handleSave={handleSave} />
+        </div>
+        <div className="text-4xl w-full flex align-middle mt-10 text-black font-extrabold">
+          <h1>View {duration} day itinerary</h1>
         </div>
         {result.map((dataResponse, i) => {
           return (
-            <div
-              key={`result-${i}`}
-              className="divide-y max-w-2xl p-6 bg-white border border-gray-700 shadow mb-2 rounded-xl"
-            >
-              <h1 className="font-bold text-xl">Day {i + 1}</h1>
+            <div key={`result-${i}`} className=" max-w-2xl mt-7 pt-6">
+              <h1 className="text-lg font-semibold mb-2">Day {i + 1}</h1>
               {dataResponse.map((activity, index) => {
                 return (
-                  <div
-                    className={`${
-                      activity["activity name"] === selectedActivity
-                        ? "bg-yellow-100"
-                        : ""
-                    }`}
-                    key={`result-${i}-day-${index}`}
-                  >
-                    <div>{activity["activity name"]}</div>
-                    <div>{activity.duration}</div>
+                  <div className="flex justify-stretch">
                     <ChangeMeBtn
                       setSelectedActivity={setSelectedActivity}
                       setActivities={setActivities}
@@ -143,13 +138,29 @@ function ResultsPage() {
                       dayIndex={i}
                       result={result}
                     />
-
-                    <ExactLocation
-                      onClick={() =>
-                        onHandleSelectedActivity(activity["activity name"])
-                      }
-                      address={activity.address}
-                    />
+                    <div
+                      className={`${
+                        activity["activity name"] === selectedActivity
+                          ? "border-black w-full rounded-md"
+                          : ""
+                      } + ${"mb-5 align-middle"}`}
+                      key={`result-${i}-day-${index}`}
+                    >
+                      <div className="flex max-w-5xl">
+                        <div className="mr-4 text-bold">
+                          {activity.duration}
+                        </div>
+                        <div className=" text-amber-400">
+                          {activity["activity name"]}
+                        </div>
+                      </div>
+                      <ExactLocation
+                        onClick={() =>
+                          onHandleSelectedActivity(activity["activity name"])
+                        }
+                        address={activity.address}
+                      />
+                    </div>
                   </div>
                 );
               })}
@@ -158,7 +169,10 @@ function ResultsPage() {
         })}
       </div>
       <div className=" flex-grow">
-        <DetailsCard cardInfo={selectedCardInfo} />
+        <DetailsCard
+          cardInfo={selectedCardInfo}
+          selectedActivity={selectedActivity}
+        />
         {result.length > 0 ? (
           //pass event
           <Map
