@@ -57,7 +57,6 @@ export async function POST(request: NextRequest) {
       }
       if (!update) {
         const image = await Unsplash.getRandomPhoto(destination.toLowerCase());
-        console.log("image", image);
         const newSearchIdPlan = await prisma.search.create({
           data: {
             destination: destination.toLowerCase(),
@@ -91,12 +90,15 @@ export async function POST(request: NextRequest) {
           { status: 201 }
         );
       }
+
+      const image = await Unsplash.getRandomPhoto(destination.toLowerCase());
       const newUserPlan = await prisma.search.create({
         data: {
           destination: destination.toLowerCase(),
           duration: parseInt(duration),
           response: JSON.stringify(response),
           user: { connect: { email: email } },
+          image,
         },
       });
       return NextResponse.json({
