@@ -1,5 +1,4 @@
 import { UNSPLASH_ACCESS_KEY } from "@/utils/constants";
-
 const BASE_URL = "https://api.unsplash.com/";
 
 export async function getRandomPhoto(criteria?: string) {
@@ -10,5 +9,5 @@ export async function getRandomPhoto(criteria?: string) {
     },
   });
   const data = await response.json();
-  return data.urls.raw;
+  return data.urls.regular;
 }
