@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "../GPTClient";
 import prisma from "../../../../db";
-import * as Unsplash from "@/lib/unsplash";
+import * as Unsplash from "@/lib/unsplash/unsplash";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
