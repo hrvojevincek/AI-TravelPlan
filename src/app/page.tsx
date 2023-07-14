@@ -153,14 +153,9 @@ export default function Home() {
 
                 <div className="pt-4 flex items-center gap-8 justify-between">
                   <AuthButton className=" bg-yellow-400 text-white p-2 px-4 rounded-full" />
-                  <Link
-                    href={`/result?${new URLSearchParams(
-                      searchData
-                    ).toString()}`}
-                    className="font-bold bg-slate-900 p-2 px-8   text-white rounded-full"
-                  >
+                  <button className="font-bold bg-slate-900 p-2 px-8   text-white rounded-full">
                     <ArrowLongRightIcon className="h-6 w-6 text-white" />
-                  </Link>
+                  </button>
                 </div>
               </form>
             </div>
