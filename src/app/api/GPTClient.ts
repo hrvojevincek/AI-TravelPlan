@@ -175,8 +175,7 @@ class MockGPTStrategy implements GPTClientStrategy {
         },
       },
     });
-    console.log("search", search);
-    console.log("response", search?.preferences);
+
     if (search?.response) {
       const data = JSON.parse(search?.response);
       data?.forEach((data: Activity[]) =>

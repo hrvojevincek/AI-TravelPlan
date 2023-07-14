@@ -20,12 +20,17 @@ export async function GET(request: Request) {
   }
 
   if (destination !== null && duration !== null) {
-    const response = await client.predict({
-      destination,
-      duration,
-      preferences,
-    });
-    return NextResponse.json(response);
+    try {
+      const response = await client.predict({
+        destination,
+        duration,
+        preferences,
+      });
+      return NextResponse.json(response);
+    } catch (e) {
+      const error = e as Error;
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
 }
 
