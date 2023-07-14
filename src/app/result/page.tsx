@@ -18,6 +18,7 @@ import Image from "next/image";
 import { ButtonLink } from "../components/ButtonLink";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { useJsApiLoader } from "@react-google-maps/api";
+import Link from "next/link";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -117,7 +118,9 @@ function ResultsPage() {
         }}
       >
         <div className="flex justify-between w-full mb-10 ">
-          <Image src={logo} alt="Best company ever"></Image>
+          <Link href="/">
+            <Image src={logo} alt="Best company ever"></Image>
+          </Link>
           <div>
             <SavePlanButton handleSave={handleSave} />
             <ButtonLink className="ml-2" href="/profile">
