@@ -9,6 +9,7 @@ import { useLocalStorage } from "@/utils/hooks";
 import Image from "next/image";
 import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
 import VoyagoLogo from "../../public/voyago-logo.svg";
+import { ButtonLink } from "./components/ButtonLink";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -66,12 +67,7 @@ export default function Home() {
         </div>
 
         <div className="fixed top-4 right-4">
-          <Link
-            href="/profile"
-            className="bg-slate-900 text-white rounded-full p-1 px-6 shadow-md"
-          >
-            Profile
-          </Link>
+          <ButtonLink href="/profile">Profile</ButtonLink>
         </div>
 
         <Image src={VoyagoLogo} alt="Voyago Logo" className="relative mb-8" />
