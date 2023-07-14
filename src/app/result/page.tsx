@@ -175,10 +175,13 @@ function ResultsPage() {
         })}
       </div>
       <div className=" flex-grow">
-        <DetailsCard
-          cardInfo={selectedCardInfo}
-          selectedActivity={selectedActivity}
-        />
+        {selectedActivity && (
+          <DetailsCard
+            cardInfo={selectedCardInfo}
+            selectedActivity={selectedActivity}
+          />
+        )}
+
         {result.length > 0 ? (
           //pass event
           <Map
