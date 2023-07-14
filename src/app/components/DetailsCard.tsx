@@ -13,7 +13,7 @@ const DetailsCard: React.FC<DetailProp> = ({ cardInfo, selectedActivity }) => {
       <Link
         href={cardInfo?.result ? cardInfo.result.url : ""}
         target="_blank"
-        className="flex flex-col items-center border rounded-lg shadow md:flex-row md:items-start md:max-w-xl  bg-gray-100 p-4"
+        className="flex flex-col items-center border rounded-lg shadow md:flex-row md:items-start md:max-w-xl  bg-zinc-50 p-4"
       >
         {renderImage(cardInfo)}
         <div className="flex flex-col justify-between p-3 leading-normal">

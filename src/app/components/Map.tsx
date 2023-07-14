@@ -6,7 +6,7 @@ import {
 } from "@react-google-maps/api";
 import type { Activity } from "@/types";
 import { geocodeAddress } from "../geocode";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, use } from "react";
 import getPlaceId from "@/utils/getPlaceId";
 
 const library = "places";
@@ -95,7 +95,10 @@ const Map: React.FC<MapProps> = ({
   }, [activities]);
 
   useEffect(() => {
-    if (!selectedActivity) return;
+    if (!selectedActivity) {
+      setSelectedMarker(undefined);
+      return;
+    }
 
     const target = activityMarkers.find(
       (marker) => marker.id === selectedActivity
@@ -106,9 +109,12 @@ const Map: React.FC<MapProps> = ({
       lat: target.lat,
       lng: target.lng,
     });
+  }, [selectedActivity]);
+
+  useEffect(() => {
     setActivityMarkers((markers) =>
       markers.map((m) => {
-        if (m.id === target.id) {
+        if (selectedMarker && m.id === selectedMarker.id) {
           return {
             ...m,
             icon: {
@@ -125,7 +131,7 @@ const Map: React.FC<MapProps> = ({
         }
       })
     );
-  }, [selectedActivity]);
+  }, [selectedMarker]);
 
   return (
     <LoadScript

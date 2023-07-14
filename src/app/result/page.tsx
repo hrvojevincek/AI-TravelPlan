@@ -17,6 +17,7 @@ import DetailsCard from "../components/DetailsCard";
 import logo from "../../../public/logo.svg";
 import Image from "next/image";
 import { ButtonLink } from "../components/ButtonLink";
+import { ClockIcon } from "@heroicons/react/24/outline";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -113,8 +114,13 @@ function ResultsPage() {
   }
 
   return (
-    <div className="bg-amber-100 flex h-screen w-screen ">
-      <div className="overflow-auto p-6 bg-amber-50">
+    <div
+      className="bg-white flex h-screen w-screen"
+      onClick={() => {
+        setSelectedActivity("");
+      }}
+    >
+      <div className="relative overflow-auto p-6 bg-white shadow-md z-10">
         <div className="flex justify-between w-full mb-10 ">
           <Image src={logo} alt="Best company ever"></Image>
           <div>
@@ -133,7 +139,19 @@ function ResultsPage() {
               <h1 className="text-lg font-semibold mb-2">Day {i + 1}</h1>
               {dataResponse.map((activity, index) => {
                 return (
-                  <div className="flex justify-stretch">
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onHandleSelectedActivity(activity["activity name"]);
+                    }}
+                    className={`flex justify-stretch border-2  p-4 rounded-md mb-4 max-w-sm cursor-pointer 
+                    ${
+                      activity["activity name"] === selectedActivity
+                        ? "border-zinc-700"
+                        : "border-zinc-100"
+                    }`}
+                    key={`result-${i}-day-${index}`}
+                  >
                     <ChangeMeBtn
                       setSelectedActivity={setSelectedActivity}
                       setActivities={setActivities}
@@ -144,28 +162,17 @@ function ResultsPage() {
                       dayIndex={i}
                       result={result}
                     />
-                    <div
-                      className={`${
-                        activity["activity name"] === selectedActivity
-                          ? "border-black w-full rounded-md"
-                          : ""
-                      } + ${"mb-5 align-middle"}`}
-                      key={`result-${i}-day-${index}`}
-                    >
-                      <div className="flex max-w-5xl">
-                        <div className="mr-4 text-bold">
+                    <div>
+                      <div className="max-w-5xl">
+                        <div className="mr-4 text-zinc-700">
+                          <ClockIcon className="inline-block w-4 h-4 mb-1 text-zinc-400" />
                           {activity.duration}
                         </div>
-                        <div className=" text-amber-400">
-                          {activity["activity name"]}
+                        <div className="font-semibold tracking-tight text-amber-400 capitalize text-lg">
+                          {activity["activity name"].toLowerCase()}
                         </div>
                       </div>
-                      <ExactLocation
-                        onClick={() =>
-                          onHandleSelectedActivity(activity["activity name"])
-                        }
-                        address={activity.address}
-                      />
+                      <ExactLocation address={activity.address} />
                     </div>
                   </div>
                 );
