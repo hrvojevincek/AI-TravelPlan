@@ -55,7 +55,6 @@ export default function Home() {
 
   return (
     <>
-      {" "}
       <div className="flex flex-col justify-center items-center h-screen">
         <div className="absolute h-full w-full">
           <Image
@@ -64,6 +63,15 @@ export default function Home() {
             className="object-cover"
             alt="plane wing in the sky"
           />
+        </div>
+
+        <div className="fixed top-4 right-4">
+          <Link
+            href="/profile"
+            className="bg-slate-900 text-white rounded-full p-1 px-6 shadow-md"
+          >
+            Profile
+          </Link>
         </div>
 
         <Image src={VoyagoLogo} alt="Voyago Logo" className="relative mb-8" />
