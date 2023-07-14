@@ -21,6 +21,7 @@ type MapProps = {
   activities: Activity[];
   selectedActivity?: string;
   handleSelectActivity: (id: string) => void;
+  destination?: string;
 };
 
 type MarkerDataType = {
@@ -35,6 +36,7 @@ const Map: React.FC<MapProps> = ({
   activities,
   selectedActivity,
   handleSelectActivity,
+  destination,
 }) => {
   const [center, setCenter] = useState({
     lat: 0, // Lat map center
@@ -67,7 +69,7 @@ const Map: React.FC<MapProps> = ({
           });
           const cardData = await getPlaceId(
             activity["activity name"],
-            activity.address
+            destination
           );
 
           setCardsInfo((prev: any) => [

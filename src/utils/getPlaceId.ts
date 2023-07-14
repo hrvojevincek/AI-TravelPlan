@@ -1,9 +1,9 @@
 export default async function getPlaceId(
   name: string,
-  address: string,
+  city?: string
 ): Promise<any> {
   const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-    name + " " + address
+    `${name}${city ? `, ${city}` : ""}`
   )}&inputtype=textquery&key=AIzaSyCCB6Ygzq1qrFozt9fOzQ-GjUBz6C_f9nk`;
 
   const res = await fetch(apiUrl);

@@ -193,6 +193,7 @@ function ResultsPage() {
           //pass event
           <Map
             setCardsInfo={setCardsInfo}
+            destination={destination!}
             activities={activities}
             selectedActivity={selectedActivity}
             handleSelectActivity={onHandleSelectedActivity}
