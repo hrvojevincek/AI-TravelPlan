@@ -288,7 +288,8 @@ let strategy: GPTClientStrategy;
 if (process.env.NODE_ENV === "development") {
   strategy = new MockGPTStrategy();
 } else {
-  strategy = new RealGPTStrategy();
+  // TODO: Implement real strategy
+  strategy = new MockGPTStrategy();
 }
 
 const client = new GPTClient(strategy);
