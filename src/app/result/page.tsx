@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import SavePlanButton from "../components/SavePlanButton";
 import SavePlanModal from "../components/SavePlanModal";
-import { useLocalStorage } from "@/utils/hooks";
 import getPlaceId from "@/utils/getPlaceId";
 import DetailsCard from "../components/DetailsCard";
 
@@ -18,6 +17,7 @@ import logo from "../../../public/logo.svg";
 import Image from "next/image";
 import { ButtonLink } from "../components/ButtonLink";
 import { ClockIcon } from "@heroicons/react/24/outline";
+import { useJsApiLoader } from "@react-google-maps/api";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -29,10 +29,7 @@ function ResultsPage() {
   const preferences = searchParams.get("preferences");
   let searchId = searchParams.get("searchId");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [localSearchId, setLocalSearchId] = useLocalStorage(
-    "TravelAISearchId",
-    null
-  );
+
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<string>("");
   const [cardsInfo, setCardsInfo] = useState([]);
@@ -44,6 +41,15 @@ function ResultsPage() {
     setSelectedCardInfo(cardInfo!);
   };
 
+  const { isLoaded: isMapLoading } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+  });
+
+  useEffect(() => {
+    search();
+  }, []);
+
   async function search() {
     if (searchId !== null) {
       const savedResult = await fetch(`/api/search?searchId=${searchId}`, {
@@ -51,7 +57,9 @@ function ResultsPage() {
       });
       const savedResultData = await savedResult.json();
       setResult(savedResultData);
+      setActivities(savedResultData.flat());
       setLoading(false);
+
       return;
     }
     const result = await fetch(
@@ -64,24 +72,14 @@ function ResultsPage() {
     setActivities(responseData.flat());
   }
 
-  useEffect(() => {
-    search();
-  }, []);
-
-  if (loading) {
+  if (loading || !isMapLoading) {
     return <LoadingPage />;
   }
 
   async function handleSave(hasBeenChecked: boolean, update = false) {
-    if (localSearchId !== null) {
-      searchId = localSearchId;
-    }
     if (searchId !== null && isModalOpen === false) {
       setIsModalOpen(true);
       return;
-    }
-    if (localSearchId !== null) {
-      searchId = localSearchId;
     }
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -104,12 +102,8 @@ function ResultsPage() {
     const saved = await isSaved.json();
     if (isSaved.status === 200) {
       alert(saved.message);
-      if (saved.searchId) {
-        setLocalSearchId(saved.searchId);
-      }
     }
     if (isSaved.status === 201) {
-      setLocalSearchId(saved.searchId);
       setIsModalOpen(true);
     }
   }

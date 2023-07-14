@@ -136,48 +136,44 @@ const Map: React.FC<MapProps> = ({
   }, [selectedMarker]);
 
   return (
-    <LoadScript
-      googleMapsApiKey={`${process.env
-        .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}&libraries=${library}`}
+    <GoogleMap
+      options={{ mapId: "cac5a755419882c6" }}
+      mapContainerClassName="z-1"
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={5}
+      onLoad={handleMapLoad}
     >
-      <GoogleMap
-        options={{ mapId: "cac5a755419882c6" }}
-        mapContainerClassName="z-1"
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={5}
-        onLoad={handleMapLoad}
-      >
-        {activityMarkers.map((marker: MarkerDataType) => {
-          return (
-            <Marker
-              key={`marker-${marker.id}`}
-              position={{
-                lat: marker.lat,
-                lng: marker.lng,
-              }}
-              onClick={() => handleSelectActivity(marker.id)}
-              icon={marker.icon}
-            />
-          );
-        })}
-        {selectedMarker && (
-          <InfoWindow
-            options={{
-              pixelOffset: new window.google.maps.Size(0, -40),
+      {activityMarkers.map((marker: MarkerDataType) => {
+        return (
+          <Marker
+            key={`marker-${marker.id}`}
+            position={{
+              lat: marker.lat,
+              lng: marker.lng,
             }}
-            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
-            onCloseClick={() => {
-              setSelectedMarker(undefined);
-            }}
-          >
-            <div>
-              <h2>{selectedMarker.id}</h2>
-            </div>
-          </InfoWindow>
-        )}
-      </GoogleMap>
-    </LoadScript>
+            onClick={() => handleSelectActivity(marker.id)}
+            icon={marker.icon}
+          />
+        );
+      })}
+
+      {selectedMarker && (
+        <InfoWindow
+          options={{
+            pixelOffset: new window.google.maps.Size(0, -40),
+          }}
+          position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+          onCloseClick={() => {
+            setSelectedMarker(undefined);
+          }}
+        >
+          <div>
+            <h2>{selectedMarker.id}</h2>
+          </div>
+        </InfoWindow>
+      )}
+    </GoogleMap>
   );
 };
 
