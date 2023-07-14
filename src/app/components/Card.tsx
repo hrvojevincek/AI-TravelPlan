@@ -21,12 +21,12 @@ const Card: React.FC<CardProps> = ({
             <Image
               className="object-cover t-0 l-0 w-full h-full rounded-xl"
               src={backgroundImage}
-              loader={unsplashLoader}
+              // loader={unsplashLoader}
               alt="background"
               fill
             />
           </div>
-          <div className="absolute w-full h-full rounded-xl bg-black opacity-20"></div>
+          <div className="absolute w-full h-full rounded-xl bg-black opacity-30"></div>
         </>
       )}{" "}
       {/** Background */}

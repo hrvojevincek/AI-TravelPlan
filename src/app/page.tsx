@@ -36,8 +36,8 @@ export default function Home() {
       value: "beaches",
     },
     {
-      label: "musseums",
-      value: "musseums",
+      label: "museums",
+      value: "museums",
     },
     {
       label: "nature",

@@ -90,6 +90,7 @@ function ResultsPage() {
       response: result,
       hasBeenChecked,
       update,
+      preferences: preferences?.split(", ") || [],
     });
     const requestOptions = {
       method: "POST",
