@@ -1,6 +1,8 @@
 "use client";
 
 import { Activity, Day, ResultData } from "@/types";
+import Image from "next/image";
+import refresh from "../../../public/refresh.svg";
 import { useState, useEffect } from "react";
 
 interface ChangeMeBtnProps {
@@ -10,15 +12,19 @@ interface ChangeMeBtnProps {
   dayIndex: number;
   result: ResultData;
   setResult: React.Dispatch<React.SetStateAction<ResultData>>;
+  setActivities: React.Dispatch<React.SetStateAction<Activity[]>>;
+  setSelectedActivity: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
+  setSelectedActivity,
   duration,
   destination,
   activityIndex,
   dayIndex,
   setResult,
   result,
+  setActivities,
 }) => {
   let places: string[] = [];
   result.forEach((day: Day) => {
@@ -41,6 +47,22 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
         return originalDay;
       });
     });
+    setActivities(
+      result
+        .map((originalDay, index) => {
+          if (dayIndex === index) {
+            return originalDay.map((originalActivity, j) => {
+              if (j === activityIndex) {
+                return activity;
+              }
+              return originalActivity;
+            });
+          }
+          return originalDay;
+        })
+        .flat()
+    );
+    setSelectedActivity("");
   }
 
   async function changeActivity() {
@@ -56,16 +78,17 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
 
     const responseData = await changeResult.json();
     const parsedData = JSON.parse(responseData);
-
+    console.log(parsedData);
     handleResultChange(parsedData[0]);
   }
 
   return (
-    <button
-      className="text-white bg-black font-semi py-1 px-2 rounded"
-      onClick={changeActivity}
-    >
-      Change this activity!
+    <button className="mr-4 hover:fill-gray-400" onClick={changeActivity}>
+      <Image
+        className="hover:fill-black"
+        alt="Change it!"
+        src={refresh}
+      ></Image>
     </button>
   );
 };

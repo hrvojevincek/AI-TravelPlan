@@ -1,36 +1,79 @@
-import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  LoadScript,
+  InfoWindow,
+} from "@react-google-maps/api";
 import type { Activity } from "@/types";
 import { geocodeAddress } from "../geocode";
 import { useState, useEffect, useRef, useCallback } from "react";
+import getPlaceId from "@/utils/getPlaceId";
 
-const containerStyle = {
+const library = "places";
+
+const containerStyle: React.CSSProperties = {
   width: "100%",
   height: "100vh",
 };
 
-const Map = ({ activities }: { activities: Activity[] }) => {
-  const [center] = useState({
-    lat: 0, // Latitud del centro del mapa
-    lng: 0, // Longitud del centro del mapa
+type MapProps = {
+  setCardsInfo: (cardInfo: any) => void;
+  activities: Activity[];
+  selectedActivity?: string;
+  handleSelectActivity: (id: string) => void;
+};
+
+type MarkerDataType = {
+  id: string;
+  lat: number;
+  lng: number;
+  icon?: { url: string };
+};
+
+const Map: React.FC<MapProps> = ({
+  setCardsInfo,
+  activities,
+  selectedActivity,
+  handleSelectActivity,
+}) => {
+  const [center, setCenter] = useState({
+    lat: 0, // Lat map center
+    lng: 0, // Long map center
   });
 
   const mapRef = useRef<google.maps.Map>();
 
-  const hanldeMapLoad = useCallback((mapInstance: google.maps.Map) => {
+  const handleMapLoad = useCallback((mapInstance: google.maps.Map) => {
     mapRef.current = mapInstance;
   }, []);
 
-  const [activityMarkers, setActivityMarkers] = useState<
-    { id: string; lat: number; lng: number }[]
-  >([]);
+  const [activityMarkers, setActivityMarkers] = useState<MarkerDataType[]>([]);
+
+  const [selectedMarker, setSelectedMarker] = useState<MarkerDataType>();
 
   useEffect(() => {
     const fetchActivityMarkers = async () => {
-      const markers: { id: string; lat: number; lng: number }[] = [];
+      const markers: MarkerDataType[] = [];
       for (const activity of activities) {
         try {
           const { lat, lng } = await geocodeAddress(activity.address);
-          markers.push({ id: activity["activity name"], lat, lng });
+          markers.push({
+            id: activity["activity name"],
+            lat,
+            lng,
+            icon: {
+              url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
+            },
+          });
+          const cardData = await getPlaceId(
+            activity["activity name"],
+            activity.address
+          );
+
+          setCardsInfo((prev: any) => [
+            ...prev,
+            { ...cardData, id: activity["activity name"] },
+          ]);
         } catch (error) {
           console.error("Error geocoding address:", error);
         }
@@ -48,19 +91,56 @@ const Map = ({ activities }: { activities: Activity[] }) => {
       }
     };
     fetchActivityMarkers();
+    console.log("FETCHING ACTIVITY MARKERS");
   }, [activities]);
 
-  //   const googleMapsApiKey = 'AIzaSyCCB6Ygzq1qrFozt9fOzQ-GjUBz6C_f9nk'
+  useEffect(() => {
+    if (!selectedActivity) return;
+
+    const target = activityMarkers.find(
+      (marker) => marker.id === selectedActivity
+    );
+    if (!target) return;
+    setSelectedMarker(target);
+    setCenter({
+      lat: target.lat,
+      lng: target.lng,
+    });
+    setActivityMarkers((markers) =>
+      markers.map((m) => {
+        if (m.id === target.id) {
+          return {
+            ...m,
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+            },
+          };
+        } else {
+          return {
+            ...m,
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
+            },
+          };
+        }
+      })
+    );
+  }, [selectedActivity]);
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyCCB6Ygzq1qrFozt9fOzQ-GjUBz6C_f9nk">
+    <LoadScript
+      googleMapsApiKey={`${process.env
+        .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}&libraries=${library}`}
+    >
       <GoogleMap
+        options={{ mapId: "cac5a755419882c6" }}
+        mapContainerClassName="z-1"
         mapContainerStyle={containerStyle}
         center={center}
         zoom={5}
-        onLoad={hanldeMapLoad}
+        onLoad={handleMapLoad}
       >
-        {activityMarkers.map((marker) => {
+        {activityMarkers.map((marker: MarkerDataType) => {
           return (
             <Marker
               key={`marker-${marker.id}`}
@@ -68,9 +148,26 @@ const Map = ({ activities }: { activities: Activity[] }) => {
                 lat: marker.lat,
                 lng: marker.lng,
               }}
+              onClick={() => handleSelectActivity(marker.id)}
+              icon={marker.icon}
             />
           );
         })}
+        {selectedMarker && (
+          <InfoWindow
+            options={{
+              pixelOffset: new window.google.maps.Size(0, -40),
+            }}
+            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+            onCloseClick={() => {
+              setSelectedMarker(undefined);
+            }}
+          >
+            <div>
+              <h2>{selectedMarker.id}</h2>
+            </div>
+          </InfoWindow>
+        )}
       </GoogleMap>
     </LoadScript>
   );

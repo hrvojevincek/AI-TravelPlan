@@ -11,11 +11,6 @@ const options = {
   callbacks: {
     async signIn({ user, account, profile, email, credentials }: any) {
       try {
-        // console.log("USER", user);
-        // console.log("ACOUNT", account);
-        // console.log("PROFILE", profile);
-        // console.log("EMAIL", email);
-        // console.log("CREDENTIALS", credentials);
         const oldUser = await prisma.user.findUnique({
           where: {
             id: user.id,

@@ -26,10 +26,6 @@ export type Activity = {
   address: string;
 };
 
-export type ExactLocationProps = {
-  address: string;
-};
-
 export type User = {
   username: string;
   email: string;
