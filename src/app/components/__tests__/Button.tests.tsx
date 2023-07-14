@@ -2,6 +2,7 @@ import { fireEvent, render } from "@testing-library/react";
 import Button from "../Button";
 import { useSession, signIn, signOut } from "next-auth/react";
 jest.mock("next-auth/react");
+global.window.open = jest.fn();
 
 describe("signed out", () => {
   beforeAll(() => {
@@ -16,7 +17,12 @@ describe("signed out", () => {
   it("calls sign in when clicked", () => {
     const { getByText } = render(<Button />);
     fireEvent.click(getByText("Sign In"));
-    expect(signIn).toHaveBeenCalledTimes(1);
+    expect(global.window.open).toHaveBeenCalledTimes(1);
+    expect(global.window.open).toHaveBeenCalledWith(
+      "/google-signin",
+      expect.anything(),
+      expect.anything()
+    );
   });
 
   afterAll(() => {
