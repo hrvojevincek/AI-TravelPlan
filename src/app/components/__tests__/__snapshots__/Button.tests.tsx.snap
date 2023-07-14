@@ -4,6 +4,7 @@ exports[`signed in renders singed out button 1`] = `
 <div>
   <button
     class="undefined"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -34,6 +35,7 @@ exports[`signed out renders signed in button 1`] = `
 <div>
   <button
     class="undefined"
+    type="button"
   >
     Sign In
   </button>

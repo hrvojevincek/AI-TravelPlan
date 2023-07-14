@@ -28,7 +28,7 @@ type MarkerDataType = {
   id: string;
   lat: number;
   lng: number;
-  icon?: { url: string };
+  icon?: { url: string; size: google.maps.Size };
 };
 
 const Map: React.FC<MapProps> = ({
@@ -55,17 +55,24 @@ const Map: React.FC<MapProps> = ({
 
   useEffect(() => {
     const fetchActivityMarkers = async () => {
+      const markerIcon = {
+        url: "/maps/pin@2x.png",
+        size: new google.maps.Size(76, 76),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(38, 38),
+        scaledSize: new google.maps.Size(38, 38),
+      };
       const markers: MarkerDataType[] = [];
       for (const activity of activities) {
         try {
-          const { lat, lng } = await geocodeAddress(activity.address);
+          const { lat, lng } = await geocodeAddress(
+            activity["activity name"] + ", " + destination
+          );
           markers.push({
             id: activity["activity name"],
             lat,
             lng,
-            icon: {
-              url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
-            },
+            icon: markerIcon,
           });
           const cardData = await getPlaceId(
             activity["activity name"],
@@ -107,28 +114,42 @@ const Map: React.FC<MapProps> = ({
     );
     if (!target) return;
     setSelectedMarker(target);
-    setCenter({
+    // setCenter({
+    //   lat: target.lat,
+    //   lng: target.lng,
+    // });
+    mapRef.current?.panTo({
       lat: target.lat,
       lng: target.lng,
     });
   }, [selectedActivity]);
 
   useEffect(() => {
+    const markerIcon = {
+      url: "/maps/pin@2x.png",
+      size: new google.maps.Size(76, 76),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(38, 38),
+      scaledSize: new google.maps.Size(38, 38),
+    };
+    const selectedMarkerIcon = {
+      url: "/maps/marker@2x.png",
+      size: new google.maps.Size(100, 120),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(25, 60),
+      scaledSize: new google.maps.Size(50, 60),
+    };
     setActivityMarkers((markers) =>
       markers.map((m) => {
         if (selectedMarker && m.id === selectedMarker.id) {
           return {
             ...m,
-            icon: {
-              url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-            },
+            icon: selectedMarkerIcon,
           };
         } else {
           return {
             ...m,
-            icon: {
-              url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-            },
+            icon: markerIcon,
           };
         }
       })
