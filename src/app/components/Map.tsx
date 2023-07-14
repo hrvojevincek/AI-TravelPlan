@@ -27,7 +27,7 @@ type MarkerDataType = {
   id: string;
   lat: number;
   lng: number;
-  icon?: { url: string } | SVGElement;
+  icon?: { url: string };
 };
 
 const Map: React.FC<MapProps> = ({
