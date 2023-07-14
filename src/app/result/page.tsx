@@ -16,6 +16,7 @@ import DetailsCard from "../components/DetailsCard";
 
 import logo from "../../../public/logo.svg";
 import Image from "next/image";
+import { ButtonLink } from "../components/ButtonLink";
 
 function ResultsPage() {
   const [result, setResult] = useState<ResultData>([]);
@@ -116,7 +117,12 @@ function ResultsPage() {
       <div className="overflow-auto p-6 bg-amber-50">
         <div className="flex justify-between w-full mb-10 ">
           <Image src={logo} alt="Best company ever"></Image>
-          <SavePlanButton handleSave={handleSave} />
+          <div>
+            <SavePlanButton handleSave={handleSave} />
+            <ButtonLink className="ml-2" href="/profile">
+              Profile
+            </ButtonLink>
+          </div>
         </div>
         <div className="text-4xl w-full flex align-middle mt-10 text-black font-extrabold">
           <h1>View {duration} day itinerary</h1>
