@@ -114,13 +114,13 @@ function ResultsPage() {
   }
 
   return (
-    <div
-      className="bg-white flex h-screen w-screen"
-      onClick={() => {
-        setSelectedActivity("");
-      }}
-    >
-      <div className="relative overflow-auto p-6 bg-white shadow-md z-10">
+    <div className="flex h-screen w-screen">
+      <div
+        className="relative overflow-auto p-6 bg-white shadow-md z-10"
+        onClick={() => {
+          setSelectedActivity("");
+        }}
+      >
         <div className="flex justify-between w-full mb-10 ">
           <Image src={logo} alt="Best company ever"></Image>
           <div>
