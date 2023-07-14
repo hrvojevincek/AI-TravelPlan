@@ -71,9 +71,18 @@ export default function Home() {
         <div className="relative w-[600px] h-[600px]">
           <div className="absolute rounded-full w-full h-full bg-neutral-500 bg-opacity-10 backdrop-blur-md"></div>
           <div className="relative h-[600px] flex flex-col justify-center items-center z-10">
-            <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
-              Let's start your journey
-            </h2>
+            {session?.user ? (
+              <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
+                Hey{" "}
+                {session.user.name?.split(" ")[0].charAt(0).toUpperCase()! +
+                  session.user.name?.split(" ")[0].slice(1).toLowerCase()!}
+                ! <span className="block">Let's start your journey</span>
+              </h2>
+            ) : (
+              <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
+                Let's start your journey
+              </h2>
+            )}
 
             <div className="mt-4">
               <form
