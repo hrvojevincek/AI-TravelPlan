@@ -21,7 +21,7 @@ const ExactLocation = ({ address, ...props }: ExactLocationProps) => {
   };
 
   return (
-    <div role="button" className="text-black" {...props}>
+    <div role="button" className="text-zinc-400 text-sm" {...props}>
       {/* <Link href={googleMapsLink} target="_blank"> */}
       {address}
       {/* </Link> */}

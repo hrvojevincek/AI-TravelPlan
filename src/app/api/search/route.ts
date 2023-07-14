@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   const duration = searchParams.get("duration");
   const preferences = searchParams.get("preferences");
   const searchId = searchParams.get("searchId");
+
   if (searchId !== "null" && searchId !== null) {
     const savedPlan = await prisma.search.findUnique({
       where: {
@@ -19,12 +20,17 @@ export async function GET(request: Request) {
   }
 
   if (destination !== null && duration !== null) {
-    const response = await client.predict({
-      destination,
-      duration,
-      preferences,
-    });
-    return NextResponse.json(response);
+    try {
+      const response = await client.predict({
+        destination,
+        duration,
+        preferences,
+      });
+      return NextResponse.json(response);
+    } catch (e) {
+      const error = e as Error;
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
 }
 
@@ -34,9 +40,10 @@ export async function POST(request: NextRequest) {
     const destination = searchParams.get("destination");
     const duration = searchParams.get("duration");
     const searchId = searchParams.get("searchId");
+
     const req = await request.json();
-    const { email, response, hasBeenChecked, update } = req;
-    console.log("THIS IS SEARCHID ==>>", searchId);
+    const { email, response, hasBeenChecked, update, preferences } = req;
+
     if (
       searchId !== null &&
       searchId !== "null" &&
@@ -64,6 +71,7 @@ export async function POST(request: NextRequest) {
             response: JSON.stringify(response),
             user: { connect: { email: email } },
             image,
+            preferences,
           },
         });
         return NextResponse.json({
@@ -99,6 +107,7 @@ export async function POST(request: NextRequest) {
           response: JSON.stringify(response),
           user: { connect: { email: email } },
           image,
+          preferences,
         },
       });
       return NextResponse.json({

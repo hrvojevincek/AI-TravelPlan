@@ -6,7 +6,7 @@ import {
 } from "@react-google-maps/api";
 import type { Activity } from "@/types";
 import { geocodeAddress } from "../geocode";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, use } from "react";
 import getPlaceId from "@/utils/getPlaceId";
 
 const library = "places";
@@ -21,13 +21,14 @@ type MapProps = {
   activities: Activity[];
   selectedActivity?: string;
   handleSelectActivity: (id: string) => void;
+  destination?: string;
 };
 
 type MarkerDataType = {
   id: string;
   lat: number;
   lng: number;
-  icon?: { url: string };
+  icon?: { url: string; size: google.maps.Size };
 };
 
 const Map: React.FC<MapProps> = ({
@@ -35,6 +36,7 @@ const Map: React.FC<MapProps> = ({
   activities,
   selectedActivity,
   handleSelectActivity,
+  destination,
 }) => {
   const [center, setCenter] = useState({
     lat: 0, // Lat map center
@@ -53,21 +55,28 @@ const Map: React.FC<MapProps> = ({
 
   useEffect(() => {
     const fetchActivityMarkers = async () => {
+      const markerIcon = {
+        url: "/maps/pin@2x.png",
+        size: new google.maps.Size(76, 76),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(38, 38),
+        scaledSize: new google.maps.Size(38, 38),
+      };
       const markers: MarkerDataType[] = [];
       for (const activity of activities) {
         try {
-          const { lat, lng } = await geocodeAddress(activity.address);
+          const { lat, lng } = await geocodeAddress(
+            activity["activity name"] + ", " + destination
+          );
           markers.push({
             id: activity["activity name"],
             lat,
             lng,
-            icon: {
-              url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
-            },
+            icon: markerIcon,
           });
           const cardData = await getPlaceId(
             activity["activity name"],
-            activity.address
+            destination
           );
 
           setCardsInfo((prev: any) => [
@@ -95,81 +104,97 @@ const Map: React.FC<MapProps> = ({
   }, [activities]);
 
   useEffect(() => {
-    if (!selectedActivity) return;
+    if (!selectedActivity) {
+      setSelectedMarker(undefined);
+      return;
+    }
 
     const target = activityMarkers.find(
       (marker) => marker.id === selectedActivity
     );
     if (!target) return;
     setSelectedMarker(target);
-    setCenter({
+    // setCenter({
+    //   lat: target.lat,
+    //   lng: target.lng,
+    // });
+    mapRef.current?.panTo({
       lat: target.lat,
       lng: target.lng,
     });
+  }, [selectedActivity]);
+
+  useEffect(() => {
+    const markerIcon = {
+      url: "/maps/pin@2x.png",
+      size: new google.maps.Size(76, 76),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(38, 38),
+      scaledSize: new google.maps.Size(38, 38),
+    };
+    const selectedMarkerIcon = {
+      url: "/maps/marker@2x.png",
+      size: new google.maps.Size(100, 120),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(25, 60),
+      scaledSize: new google.maps.Size(50, 60),
+    };
     setActivityMarkers((markers) =>
       markers.map((m) => {
-        if (m.id === target.id) {
+        if (selectedMarker && m.id === selectedMarker.id) {
           return {
             ...m,
-            icon: {
-              url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-            },
+            icon: selectedMarkerIcon,
           };
         } else {
           return {
             ...m,
-            icon: {
-              url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-            },
+            icon: markerIcon,
           };
         }
       })
     );
-  }, [selectedActivity]);
+  }, [selectedMarker]);
 
   return (
-    <LoadScript
-      googleMapsApiKey={`${process.env
-        .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}&libraries=${library}`}
+    <GoogleMap
+      options={{ mapId: "cac5a755419882c6" }}
+      mapContainerClassName="z-1"
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={5}
+      onLoad={handleMapLoad}
     >
-      <GoogleMap
-        options={{ mapId: "cac5a755419882c6" }}
-        mapContainerClassName="z-1"
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={5}
-        onLoad={handleMapLoad}
-      >
-        {activityMarkers.map((marker: MarkerDataType) => {
-          return (
-            <Marker
-              key={`marker-${marker.id}`}
-              position={{
-                lat: marker.lat,
-                lng: marker.lng,
-              }}
-              onClick={() => handleSelectActivity(marker.id)}
-              icon={marker.icon}
-            />
-          );
-        })}
-        {selectedMarker && (
-          <InfoWindow
-            options={{
-              pixelOffset: new window.google.maps.Size(0, -40),
+      {activityMarkers.map((marker: MarkerDataType) => {
+        return (
+          <Marker
+            key={`marker-${marker.id}`}
+            position={{
+              lat: marker.lat,
+              lng: marker.lng,
             }}
-            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
-            onCloseClick={() => {
-              setSelectedMarker(undefined);
-            }}
-          >
-            <div>
-              <h2>{selectedMarker.id}</h2>
-            </div>
-          </InfoWindow>
-        )}
-      </GoogleMap>
-    </LoadScript>
+            onClick={() => handleSelectActivity(marker.id)}
+            icon={marker.icon}
+          />
+        );
+      })}
+
+      {selectedMarker && (
+        <InfoWindow
+          options={{
+            pixelOffset: new window.google.maps.Size(0, -40),
+          }}
+          position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+          onCloseClick={() => {
+            setSelectedMarker(undefined);
+          }}
+        >
+          <div>
+            <h2>{selectedMarker.id}</h2>
+          </div>
+        </InfoWindow>
+      )}
+    </GoogleMap>
   );
 };
 

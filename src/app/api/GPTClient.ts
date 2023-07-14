@@ -175,8 +175,7 @@ class MockGPTStrategy implements GPTClientStrategy {
         },
       },
     });
-    console.log("search", search);
-    console.log("response", search?.preferences);
+
     if (search?.response) {
       const data = JSON.parse(search?.response);
       data?.forEach((data: Activity[]) =>
@@ -288,7 +287,8 @@ let strategy: GPTClientStrategy;
 if (process.env.NODE_ENV === "development") {
   strategy = new MockGPTStrategy();
 } else {
-  strategy = new RealGPTStrategy();
+  // TODO: Implement real strategy
+  strategy = new MockGPTStrategy();
 }
 
 const client = new GPTClient(strategy);
