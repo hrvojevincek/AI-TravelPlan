@@ -28,14 +28,8 @@ const LoadingImage = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center">
-      <Image
-        src={images[currentImageIndex]}
-        layout="fill"
-        objectFit="cover"
-        alt="image"
-        priority
-      />
+    <div className="flex justify-center items-center relative h-screen">
+      <Image src={images[currentImageIndex]} fill={true} alt="image" priority />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="absolute bg-gray-700 bg-opacity-75 rounded-full w-100 h-100"></div>
         <div className="flex flex-col align-center items-center z-10">

@@ -4,7 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { usePopupCenter } from "@/lib/hooks/useAuthPopup";
 
-const Button = ({
+const AuthButton = ({
   className,
   ...props
 }: React.DetailedHTMLProps<
@@ -44,4 +44,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default AuthButton;
