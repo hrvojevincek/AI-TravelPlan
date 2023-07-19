@@ -10,8 +10,7 @@ export async function GET(request: Request) {
   const preferences = searchParams.get("preferences");
   const searchId = searchParams.get("searchId");
 
-  // There's a search id
-  if (searchId !== "null" && searchId !== null) {
+  if (searchId !== null) {
     const savedPlan = await prisma.search.findUnique({
       where: {
         id: searchId,

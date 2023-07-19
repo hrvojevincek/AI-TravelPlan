@@ -2,13 +2,14 @@
 
 import { useSession } from "next-auth/react";
 
-function SearchTitle() {
+function SearchTitle({ serverSession }: { serverSession: any }) {
   const { data: session } = useSession();
-  return session?.user ? (
+  let actualsession = session?.user || serverSession?.user;
+  return actualsession ? (
     <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
       Hey{" "}
-      {session.user.name?.split(" ")[0].charAt(0).toUpperCase()! +
-        session.user.name?.split(" ")[0].slice(1).toLowerCase()!}
+      {actualsession.name?.split(" ")[0].charAt(0).toUpperCase()! +
+        actualsession.name?.split(" ")[0].slice(1).toLowerCase()!}
       ! <span className="block">Let's start your journey</span>
     </h2>
   ) : (

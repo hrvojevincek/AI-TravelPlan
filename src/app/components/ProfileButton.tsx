@@ -2,9 +2,10 @@
 import { ButtonLink } from "./ButtonLink";
 import { useSession } from "next-auth/react";
 
-function ProfileButton() {
+function ProfileButton({ serverSession }: { serverSession: any }) {
   const { data: session } = useSession();
-  return session?.user ? (
+  let actualsession = session?.user || serverSession?.user;
+  return actualsession ? (
     <ButtonLink href="/profile">Profile</ButtonLink>
   ) : (
     <></>

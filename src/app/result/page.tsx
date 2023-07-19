@@ -28,7 +28,7 @@ function ResultsPage() {
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
   const preferences = searchParams.get("preferences");
-  let searchId = searchParams.get("searchId");
+  const searchId = searchParams.get("searchId");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -53,7 +53,9 @@ function ResultsPage() {
   async function search() {
     const url =
       searchId === null
-        ? `/api/search?destination=${destination}&duration=${duration}&preferences=${preferences}`
+        ? `/api/search?destination=${destination}&duration=${duration}${
+            preferences ? `&preferences=${preferences}` : ""
+          }`
         : `/api/search?searchId=${searchId}`;
     const result = await fetch(url, {
       headers: { "Content-Type": "application/json" },

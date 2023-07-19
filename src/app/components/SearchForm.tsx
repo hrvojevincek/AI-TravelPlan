@@ -2,14 +2,63 @@
 import { useState } from "react";
 import AuthButton from "./AuthButton";
 import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
+import SelectPreferences, { SelectOption } from "./SelectPreferences";
+import { useSession } from "next-auth/react";
+import { SearchData } from "@/types";
 
-function SearchForm() {
-  const [searchData, setSearchData] = useState({});
+function SearchForm({ serverSession }: { serverSession: any }) {
+  const [searchData, setSearchData] = useState<SearchData>({});
+  const { data: session } = useSession(serverSession);
+  let actualsession = session?.user || serverSession?.user;
+  const url = `http://localhost:3000/result?destination=${
+    searchData.destination
+  }&duration=${searchData.duration}${
+    searchData.preferences ? `&preferences=${searchData.preferences}` : ""
+  }`;
+
+  console.log("preferences ==>>", searchData.preferences);
+
+  const options: SelectOption[] = [
+    {
+      label: "art",
+      value: "art",
+    },
+    {
+      label: "architecture",
+      value: "architecture",
+    },
+    {
+      label: "beaches",
+      value: "beaches",
+    },
+    {
+      label: "museums",
+      value: "museums",
+    },
+    {
+      label: "nature",
+      value: "nature",
+    },
+    {
+      label: "sports",
+      value: "sports",
+    },
+  ];
+
+  function handleSelectChange(value: SelectOption[] | undefined) {
+    setSearchData((prev) => ({
+      ...prev,
+      preferences: value ? value.map((v) => v.value).join(", ") : undefined,
+    }));
+  }
+
   return (
     <form
       className="space-y-3"
-      action={`/result?${new URLSearchParams(searchData).toString()}`}
-      method="GET"
+      onSubmit={(e) => {
+        e.preventDefault();
+        document.location.href = url;
+      }}
     >
       <div>
         <div className="mt-3">
@@ -42,30 +91,31 @@ function SearchForm() {
           />
         </div>
       </div>
-      {/* {session?.user && (
-                  <div className="mt-2">
-                    <label
-                      htmlFor=""
-                      className="font-semibold text-white drop-shadow-md tracking-tighter"
-                    >
-                      And preferences:
-                    </label>
-                    <div className="mt-1">
-                      <Select
-                        mode="multiple"
-                        allowClear
-                        style={{ width: "100%" }}
-                        placeholder="Select preferences"
-                        value={searchData.preferences?.split(", ")}
-                        onChange={handleChange}
-                        options={options}
-                      />
-                    </div>
-                  </div>
-                )} */}
+      {actualsession && (
+        <div className="mt-2">
+          <div className="mt-1">
+            <SelectPreferences
+              multiple={true}
+              placeholder="Select your preferences"
+              value={
+                searchData.preferences
+                  ? searchData.preferences
+                      ?.split(", ")
+                      .map((v) => ({ label: v, value: v }))
+                  : undefined
+              }
+              onChange={handleSelectChange}
+              options={options}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="pt-4 flex items-center gap-8 justify-between">
-        <AuthButton className=" bg-yellow-400 text-white p-2 px-4 rounded-full" />
+        <AuthButton
+          session={actualsession}
+          className=" bg-yellow-400 text-white p-2 px-4 rounded-full"
+        />
         <button className="font-bold bg-slate-900 p-2 px-8   text-white rounded-full">
           <ArrowLongRightIcon className="h-6 w-6 text-white" />
         </button>
