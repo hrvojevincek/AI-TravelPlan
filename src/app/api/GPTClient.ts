@@ -1,6 +1,6 @@
 import { Activity, Day, ResultData, ResultEdit } from "@/types";
-import prisma from "../../../db";
-import openai from "../../../openai";
+import prisma from "../../lib/db";
+import openai from "../../lib/openai";
 import { json } from "stream/consumers";
 
 type GPTClientStrategy = {

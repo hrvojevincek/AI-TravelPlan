@@ -1,4 +1,4 @@
-import prisma from "../../../../../db";
+import prisma from "../../../../lib/db";
 import GoogleProvider from "next-auth/providers/google";
 
 const options = {

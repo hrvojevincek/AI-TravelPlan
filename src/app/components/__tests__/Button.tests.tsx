@@ -1,6 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 import Button from "../Button";
 import { useSession, signIn, signOut } from "next-auth/react";
+
 jest.mock("next-auth/react");
 global.window.open = jest.fn();
 
