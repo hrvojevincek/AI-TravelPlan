@@ -1,5 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
-import Button from "../Button";
+import AuthButton from "../AuthButton";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 jest.mock("next-auth/react");
@@ -11,12 +11,12 @@ describe("signed out", () => {
   });
 
   it("renders signed in button", () => {
-    const { container } = render(<Button />);
+    const { container } = render(<AuthButton />);
     expect(container).toMatchSnapshot();
   });
 
   it("calls sign in when clicked", () => {
-    const { getByText } = render(<Button />);
+    const { getByText } = render(<AuthButton />);
     fireEvent.click(getByText("Sign In"));
     expect(global.window.open).toHaveBeenCalledTimes(1);
     expect(global.window.open).toHaveBeenCalledWith(
