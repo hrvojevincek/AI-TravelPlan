@@ -42,12 +42,12 @@ describe("signed in", () => {
     });
   });
   it("renders singed out button", () => {
-    const { container } = render(<Button />);
+    const { container } = render(<AuthButton />);
     expect(container).toMatchSnapshot();
   });
 
   it("calls sign out when clicked", () => {
-    const { getByText } = render(<Button />);
+    const { getByText } = render(<AuthButton />);
     fireEvent.click(getByText("Sign Out"));
     expect(signOut).toHaveBeenCalledTimes(1);
   });
