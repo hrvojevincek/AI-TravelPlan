@@ -16,8 +16,6 @@ function SearchForm({ serverSession }: { serverSession: any }) {
     searchData.preferences ? `&preferences=${searchData.preferences}` : ""
   }`;
 
-  console.log("preferences ==>>", searchData.preferences);
-
   const options: SelectOption[] = [
     {
       label: "art",
@@ -66,6 +64,7 @@ function SearchForm({ serverSession }: { serverSession: any }) {
             onChange={(e) => {
               setSearchData({ ...searchData, destination: e.target.value });
             }}
+            value={searchData.destination}
             id="destination"
             name="destination"
             type="text"
@@ -82,6 +81,7 @@ function SearchForm({ serverSession }: { serverSession: any }) {
             onChange={(e) => {
               setSearchData({ ...searchData, duration: e.target.value });
             }}
+            value={searchData.duration}
             id="duration"
             name="duration"
             type="text"
