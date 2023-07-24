@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "../GPTClient";
-import prisma from "../../../../db";
+import prisma from "../../../lib/db";
 import * as Unsplash from "@/lib/unsplash/unsplash";
 
 export async function GET(request: Request) {
@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   const preferences = searchParams.get("preferences");
   const searchId = searchParams.get("searchId");
 
+  // There's a search id
   if (searchId !== "null" && searchId !== null) {
     const savedPlan = await prisma.search.findUnique({
       where: {
@@ -19,6 +20,7 @@ export async function GET(request: Request) {
     return NextResponse.json(JSON.parse(savedPlan?.response as string));
   }
 
+  // No search id but there's destination and duration
   if (destination !== null && duration !== null) {
     try {
       const response = await client.predict({

@@ -14,7 +14,12 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "seed": "prisma db seed",
     "dev:test": "jest --watch",
-    "test": "jest --ci --coverage"
+    "test:docker:up": "docker compose -f docker-compose.yml -f docker-compose.test.yml up -d",
+    "test:docker:down": "docker stop db_test && docker container rm db_test",
+    "predev:test": "yarn test:docker:up && yarn prisma migrate deploy",
+    "pretest": "yarn prisma migrate deploy",
+    "test": "jest --ci --coverage",
+    "postdev:test": "yarn test:docker:down"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -54,5 +59,8 @@
     "prettier": "^2.8.8",
     "prisma": "^4.16.2",
     "ts-node": "^10.9.1"
+  },
+  "resolutions": {
+    "cross-fetch": "4.0.0"
   }
 }
