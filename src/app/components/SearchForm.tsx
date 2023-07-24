@@ -43,10 +43,12 @@ function SearchForm({ serverSession }: { serverSession: any }) {
     },
   ];
 
-  function handleSelectChange(value: SelectOption[] | undefined) {
+  function handleSelectChange(options: SelectOption[] | undefined) {
     setSearchData((prev) => ({
       ...prev,
-      preferences: value ? value.map((v) => v.value).join(", ") : undefined,
+      preferences: options
+        ? options.map((option) => option.value).join(", ")
+        : undefined,
     }));
   }
 
