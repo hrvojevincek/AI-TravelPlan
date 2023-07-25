@@ -11,12 +11,12 @@ describe("signed out", () => {
   });
 
   it("renders signed in button", () => {
-    const { container } = render(<AuthButton />);
+    const { container } = render(<AuthButton session={undefined} />);
     expect(container).toMatchSnapshot();
   });
 
   it("calls sign in when clicked", () => {
-    const { getByText } = render(<AuthButton />);
+    const { getByText } = render(<AuthButton session={undefined} />);
     fireEvent.click(getByText("Sign In"));
     expect(global.window.open).toHaveBeenCalledTimes(1);
     expect(global.window.open).toHaveBeenCalledWith(
@@ -41,13 +41,18 @@ describe("signed in", () => {
       },
     });
   });
+  const session = {
+    name: "John",
+    email: "whatever",
+    image: "whatever",
+  };
   it("renders singed out button", () => {
-    const { container } = render(<AuthButton />);
+    const { container } = render(<AuthButton session={session} />);
     expect(container).toMatchSnapshot();
   });
 
   it("calls sign out when clicked", () => {
-    const { getByText } = render(<AuthButton />);
+    const { getByText } = render(<AuthButton session={session} />);
     fireEvent.click(getByText("Sign Out"));
     expect(signOut).toHaveBeenCalledTimes(1);
   });

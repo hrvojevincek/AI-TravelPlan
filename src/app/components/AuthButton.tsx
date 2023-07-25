@@ -17,7 +17,9 @@ const AuthButton = ({
 }: React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
-> & { session: {email:string, name: string, image: string} }) => {
+> & {
+  session: { email: string; name: string; image: string } | undefined;
+}) => {
   const popupCenter = usePopupCenter();
 
   if (session) {
