@@ -10,11 +10,18 @@ function SearchForm({ serverSession }: { serverSession: any }) {
   const [searchData, setSearchData] = useState<SearchData>({});
   const { data: session } = useSession(serverSession);
   let actualsession = session?.user || serverSession?.user;
-  const url = `http://localhost:3000/result?destination=${
-    searchData.destination
-  }&duration=${searchData.duration}${
-    searchData.preferences ? `&preferences=${searchData.preferences}` : ""
-  }`;
+  const url =
+    process.env.NODE_ENV === "development"
+      ? `http://localhost:3000/result?destination=${
+          searchData.destination
+        }&duration=${searchData.duration}${
+          searchData.preferences ? `&preferences=${searchData.preferences}` : ""
+        }`
+      : `https://ai-travel-plan.vercel.app/result?destination=${
+          searchData.destination
+        }&duration=${searchData.duration}${
+          searchData.preferences ? `&preferences=${searchData.preferences}` : ""
+        }`;
 
   const options: SelectOption[] = [
     {
