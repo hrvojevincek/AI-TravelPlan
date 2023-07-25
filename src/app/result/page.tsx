@@ -28,7 +28,7 @@ function ResultsPage() {
   const destination = searchParams.get("destination");
   const duration = searchParams.get("duration");
   const preferences = searchParams.get("preferences");
-  let searchId = searchParams.get("searchId");
+  const searchId = searchParams.get("searchId");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -38,7 +38,6 @@ function ResultsPage() {
   const onHandleSelectedActivity = (id: string) => {
     setSelectedActivity(id);
     const cardInfo = cardsInfo.find((el: any) => el.id === id);
-    console.log(cardInfo);
     setSelectedCardInfo(cardInfo!);
   };
 
@@ -52,21 +51,15 @@ function ResultsPage() {
   }, []);
 
   async function search() {
-    if (searchId !== null) {
-      const savedResult = await fetch(`/api/search?searchId=${searchId}`, {
-        headers: { "Content-Type": "application/json" },
-      });
-      const savedResultData = await savedResult.json();
-      setResult(savedResultData);
-      setActivities(savedResultData.flat());
-      setLoading(false);
-
-      return;
-    }
-    const result = await fetch(
-      `/api/search?destination=${destination}&duration=${duration}&preferences=${preferences}`,
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const url =
+      searchId === null
+        ? `/api/search?destination=${destination}&duration=${duration}${
+            preferences ? `&preferences=${preferences}` : ""
+          }`
+        : `/api/search?searchId=${searchId}`;
+    const result = await fetch(url, {
+      headers: { "Content-Type": "application/json" },
+    });
     const responseData = (await result.json()) as ResultData;
     setResult(responseData);
     setLoading(false);

@@ -62,30 +62,23 @@ const Map: React.FC<MapProps> = ({
         anchor: new google.maps.Point(38, 38),
         scaledSize: new google.maps.Size(38, 38),
       };
-      const markers: MarkerDataType[] = [];
-      for (const activity of activities) {
-        try {
-          const { lat, lng } = await geocodeAddress(
-            activity["activity name"] + ", " + destination
-          );
-          markers.push({
-            id: activity["activity name"],
-            lat,
-            lng,
-            icon: markerIcon,
-          });
-          const cardData = await getPlaceId(
-            activity["activity name"],
-            destination
-          );
-
+      let markers: MarkerDataType[] = [];
+      try {
+        const information = await getPlaceId(activities, destination);
+        markers = information.map((info: any) => {
           setCardsInfo((prev: any) => [
             ...prev,
-            { ...cardData, id: activity["activity name"] },
+            { ...info.editorial, id: info.activityName },
           ]);
-        } catch (error) {
-          console.error("Error geocoding address:", error);
-        }
+          return {
+            id: info.activityName,
+            lat: info.lat,
+            lng: info.lng,
+            icon: markerIcon,
+          };
+        });
+      } catch (error) {
+        console.error("Error geocoding address:", error);
       }
 
       setActivityMarkers(markers);
@@ -96,11 +89,12 @@ const Map: React.FC<MapProps> = ({
       });
       const mapInstance = mapRef.current;
       if (mapInstance && markers.length > 0) {
-        mapInstance.fitBounds(bounds);
+        mapInstance.panToBounds(bounds);
+        mapInstance.setZoom(5);
+        setTimeout(() => mapInstance.fitBounds(bounds), 500);
       }
     };
     fetchActivityMarkers();
-    console.log("FETCHING ACTIVITY MARKERS");
   }, [activities]);
 
   useEffect(() => {
@@ -165,10 +159,10 @@ const Map: React.FC<MapProps> = ({
       zoom={5}
       onLoad={handleMapLoad}
     >
-      {activityMarkers.map((marker: MarkerDataType) => {
+      {activityMarkers.map((marker: MarkerDataType, index) => {
         return (
           <Marker
-            key={`marker-${marker.id}`}
+            key={`marker-${marker.id}${index}`}
             position={{
               lat: marker.lat,
               lng: marker.lng,

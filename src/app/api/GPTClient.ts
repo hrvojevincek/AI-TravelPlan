@@ -84,9 +84,11 @@ class MockGPTStrategy implements GPTClientStrategy {
     preferences,
   }: searchProps): Promise<any> {
     const prefText =
-      preferences !== "null"
+      preferences !== null
         ? `, when choosing activities take into account I like ${preferences}`
         : "";
+
+    console.log("mocking", prefText);
 
     const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
     the result should be formatted in this way:
@@ -116,7 +118,7 @@ class MockGPTStrategy implements GPTClientStrategy {
     Answer after the ampersands line
     &&&&&&&`;
 
-    if (preferences !== "null") {
+    if (preferences !== null) {
       const savedPrefSearch = await prisma.search.findFirst({
         where: {
           destination: destination.toLowerCase(),

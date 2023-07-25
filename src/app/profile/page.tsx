@@ -1,12 +1,11 @@
-"use client";
-
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
 import Profile from "../components/profile";
+import options from "../api/auth/[...nextauth]/options";
 
-export default function profilePage() {
-  const { data: session } = useSession();
+export default async function profilePage() {
+  const session = await getServerSession(options);
 
-  return session?.user ? (
+  return session ? (
     <Profile
       user={session.user as { name: string; image: string; email: string }}
     />

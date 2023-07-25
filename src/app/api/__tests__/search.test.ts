@@ -65,7 +65,7 @@ describe("New search (no search id)", () => {
 
     // TODO: remove the preferences=null from the querystring
     const request = new Request(
-      "http://localhost:3000/api/search?destination=Barcelona&duration=3&preferences=null"
+      "http://localhost:3000/api/search?destination=Barcelona&duration=3"
     );
 
     const response = await GET(request);
@@ -94,7 +94,7 @@ describe("New search (no search id)", () => {
 
     // TODO: remove the preferences=null from the querystring
     const request = new Request(
-      "http://localhost:3000/api/search?destination=Barcelona&duration=3&preferences=null"
+      "http://localhost:3000/api/search?destination=Barcelona&duration=3"
     );
 
     const response = await GET(request);
@@ -127,7 +127,7 @@ describe("New search (no search id)", () => {
 
     // TODO: remove the preferences=null from the querystring
     const request = new Request(
-      "http://localhost:3000/api/search?destination=Barcelona&duration=3&preferences=null"
+      "http://localhost:3000/api/search?destination=Barcelona&duration=3"
     );
 
     const response = await GET(request);

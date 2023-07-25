@@ -1,20 +1,28 @@
 "use client";
 import React from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import {
+  SessionContextValue,
+  signIn,
+  signOut,
+  useSession,
+} from "next-auth/react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { usePopupCenter } from "@/lib/hooks/useAuthPopup";
+import { Session } from "next-auth";
 
-const Button = ({
+const AuthButton = ({
   className,
+  session,
   ...props
 }: React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
->) => {
-  const { data: session } = useSession();
+> & {
+  session: { email: string; name: string; image: string } | undefined;
+}) => {
   const popupCenter = usePopupCenter();
 
-  if (session && session.user) {
+  if (session) {
     return (
       <>
         {/* <div className="flex gap-4"> */}
@@ -44,4 +52,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default AuthButton;

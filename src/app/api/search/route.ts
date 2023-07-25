@@ -10,14 +10,13 @@ export async function GET(request: Request) {
   const preferences = searchParams.get("preferences");
   const searchId = searchParams.get("searchId");
 
-  // There's a search id
-  if (searchId !== "null" && searchId !== null) {
-    const savedPlan = await prisma.search.findUnique({
+  if (searchId !== null) {
+    const savedPlanById = await prisma.search.findUnique({
       where: {
         id: searchId,
       },
     });
-    return NextResponse.json(JSON.parse(savedPlan?.response as string));
+    return NextResponse.json(JSON.parse(savedPlanById?.response as string));
   }
 
   // No search id but there's destination and duration

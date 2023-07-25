@@ -1,48 +1,20 @@
-"use client";
-
 import PlanCard from "../components/PlanCard";
 import Link from "next/link";
-import { useLocalStorage } from "@/utils/hooks";
-
-import { useEffect, useState } from "react";
-import { Search } from "@/types";
 import ArrowRightIcon from "@heroicons/react/24/outline/ArrowRightOnRectangleIcon";
 import UserIcon from "@heroicons/react/24/outline/UserIcon";
 import BookmarkIcon from "@heroicons/react/24/outline/BookmarkIcon";
 import SettingsIcon from "@heroicons/react/24/outline/CogIcon";
 
-function Profile({
+async function Profile({
   user,
 }: {
   user: { email: string; image: string; name: string };
 }) {
-  const [localSearchId, setLocalSearchId] = useLocalStorage(
-    "TravelAISearchId",
-    null
-  );
-  const [savedPlans, setSavedPlans] = useState<Search[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  async function getSavedPlans() {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    const raw = JSON.stringify({
-      email: user.email,
-    });
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-    };
-    const saved = await fetch("/api/profile", requestOptions);
-    const savedPlansData = await saved.json();
-    console.log(savedPlansData);
-    setSavedPlans(savedPlansData);
-  }
-
-  useEffect(() => {
-    getSavedPlans();
-  }, []);
+  const savedPlans = await prisma?.search.findMany({
+    where: {
+      user: { email: user.email },
+    },
+  });
 
   return (
     <>
@@ -91,14 +63,11 @@ function Profile({
             Saved Plans
           </p>
           <div className="flex flex-wrap justify-left gap-8 mt-4">
-            {savedPlans.map((plan: any, pIndex: number) => {
+            {savedPlans?.map((plan: any, pIndex: number) => {
               return (
                 <Link
                   key={plan.id}
                   href={`/result?searchId=${plan.id}&duration=${plan.duration}&destination=${plan.destination}`}
-                  onClick={() => {
-                    setLocalSearchId(null);
-                  }}
                 >
                   <PlanCard plan={plan} />
                 </Link>
