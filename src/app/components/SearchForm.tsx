@@ -5,11 +5,13 @@ import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
 import SelectPreferences, { SelectOption } from "./SelectPreferences";
 import { useSession } from "next-auth/react";
 import { SearchData } from "@/types";
+import { options } from "@/utils/options";
 
 function SearchForm({ serverSession }: { serverSession: any }) {
   const [searchData, setSearchData] = useState<SearchData>({});
   const { data: session } = useSession(serverSession);
   let actualsession = session?.user || serverSession?.user;
+  
   const url =
     process.env.NODE_ENV === "development"
       ? `http://localhost:3000/result?destination=${
@@ -22,33 +24,6 @@ function SearchForm({ serverSession }: { serverSession: any }) {
         }&duration=${searchData.duration}${
           searchData.preferences ? `&preferences=${searchData.preferences}` : ""
         }`;
-
-  const options: SelectOption[] = [
-    {
-      label: "art",
-      value: "art",
-    },
-    {
-      label: "architecture",
-      value: "architecture",
-    },
-    {
-      label: "beaches",
-      value: "beaches",
-    },
-    {
-      label: "museums",
-      value: "museums",
-    },
-    {
-      label: "nature",
-      value: "nature",
-    },
-    {
-      label: "sports",
-      value: "sports",
-    },
-  ];
 
   function handleSelectChange(options: SelectOption[] | undefined) {
     setSearchData((prev) => ({

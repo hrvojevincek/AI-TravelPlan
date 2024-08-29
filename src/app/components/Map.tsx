@@ -1,13 +1,7 @@
-import {
-  GoogleMap,
-  Marker,
-  LoadScript,
-  InfoWindow,
-} from "@react-google-maps/api";
 import type { Activity } from "@/types";
-import { geocodeAddress } from "../geocode";
-import { useState, useEffect, useRef, useCallback, use } from "react";
 import getPlaceId from "@/utils/getPlaceId";
+import { GoogleMap, InfoWindow, Marker } from "@react-google-maps/api";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const library = "places";
 
