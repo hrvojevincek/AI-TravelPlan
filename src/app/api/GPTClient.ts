@@ -1,7 +1,6 @@
-import { Activity, Day, ResultData, ResultEdit } from "@/types";
+import { Activity, ResultData, ResultEdit } from "@/types";
 import prisma from "../../lib/db";
-import openai from "../../lib/openai";
-import { json } from "stream/consumers";
+import { openAIClient } from "@/lib/openai";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -88,7 +87,7 @@ class MockGPTStrategy implements GPTClientStrategy {
         ? `, when choosing activities take into account I like ${preferences}`
         : "";
 
-    console.log("mocking", prefText);
+    console.log("AVARILABLEs", destination, duration);
 
     const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
     the result should be formatted in this way:
@@ -118,7 +117,8 @@ class MockGPTStrategy implements GPTClientStrategy {
     Answer after the ampersands line
     &&&&&&&`;
 
-    if (preferences !== null) {
+    //! IF WE SELECTED PREFERENCES
+    if (preferences) {
       const savedPrefSearch = await prisma.search.findFirst({
         where: {
           destination: destination.toLowerCase(),
@@ -137,16 +137,22 @@ class MockGPTStrategy implements GPTClientStrategy {
         return parsedPrefSearch;
       }
 
-      const prefResponse = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: responsePrompt,
+      const prefResponse = await openAIClient.chat.completions.create({
+        model: "gpt-3.5-turbo",
         temperature: 1,
         max_tokens: 800,
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          {
+            role: "user",
+            content: responsePrompt,
+          },
+        ],
       });
       //if (userInfo) connect to user table
-      if (prefResponse.data.choices[0].text !== undefined) {
+      if (prefResponse.choices[0].message.content) {
         const prefResponseObject = client.parseChatGPT(
-          prefResponse.data.choices[0].text
+          prefResponse.choices[0].message.content
         );
 
         const newPrefSearch = await prisma.search.create({
@@ -163,11 +169,11 @@ class MockGPTStrategy implements GPTClientStrategy {
             client.uniqueActivities.push(activity["activity name"]);
           });
         });
-
+        console.log("prefResponseObject", prefResponseObject);
         return prefResponseObject;
       }
     }
-    // Return your mock data here
+    //! IF ITS IN DB
     const search = await prisma.search.findFirst({
       where: {
         destination: destination.toLowerCase(),
@@ -190,15 +196,27 @@ class MockGPTStrategy implements GPTClientStrategy {
     }
 
     //OPEN API KEY REQUEST
-    const response = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: responsePrompt,
+    const response = await openAIClient.chat.completions.create({
+      model: "gpt-3.5-turbo",
       temperature: 1,
       max_tokens: 800,
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: responsePrompt,
+        },
+      ],
     });
+
+    // ? choices[0].message.content
+
     //if (userInfo) connect to user table
-    if (response.data.choices[0].text !== undefined) {
-      const responseObject = client.parseChatGPT(response.data.choices[0].text);
+    if (response.choices[0].message.content) {
+      const responseObject = client.parseChatGPT(
+        response.choices[0].message.content
+      );
+
       const savedSearch = await prisma.search.create({
         data: {
           duration: parseInt(duration),
@@ -230,15 +248,21 @@ class MockGPTStrategy implements GPTClientStrategy {
 
     try {
       const prompt = `suggest me another activity, but IT MUST NOT BE any of this: ${client.uniqueActivities.toString()}. Make it in the same ${destination} with duration ${duration}, the times CAN NOT overlap with other durations that day. Response should be in stricly JSON format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line and dont forget DONT FORGET QUOTATION MARKS, BRACKETS!!! : [{"activity name": answer, "duration": answer(24 hour format-24 hour format), "address": answer}]`;
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
+      const response = await openAIClient.chat.completions.create({
+        model: "gpt-3.5-turbo",
         temperature: 0.2,
         max_tokens: 350,
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
       });
-      console.log("response data bro", response.data);
-      if (response.data.choices[0].text) {
-        return response.data.choices[0].text;
+      console.log("response data bro", response);
+      if (response.choices[0].message.content) {
+        return response.choices[0].message.content;
       }
     } catch (error) {
       console.error(error);
@@ -267,16 +291,21 @@ class RealGPTStrategy implements GPTClientStrategy {
     activityNamesArray,
   }: editProps): Promise<any> {
     try {
-      const prompt = `suggest me another activity that isnt any of this ones ${activityNamesArray} in the same ${destination} with duration ${duration}, the durations should not overlap with other durations that day. response should be in json format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line like this: [{"activity name": answer, "duration": answer(24 hour format-24 hour format), address: answer}]`;
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
-        temperature: 0.5,
+      const prompt = `suggest me another activity that isn't any of these: ${activityNamesArray.join(
+        ", "
+      )}. It should be in ${destination} with a duration of ${duration}. The times must not overlap with other durations that day. Response should be in strictly JSON format and only add answers where it says answer. It needs to have the format stated inside the parentheses, everything on the same line. Don't forget quotation marks and brackets! Format: [{"activity name": answer, "duration": answer(24 hour format-24 hour format), "address": answer}]`;
+      const response = await openAIClient.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.2,
         max_tokens: 350,
       });
 
-      if (response.data.choices[0].text) {
-        return JSON.parse(response.data.choices[0].text);
+      if (response.choices[0].message.content) {
+        return JSON.parse(response.choices[0].message.content);
       }
     } catch (error) {
       console.error(error);

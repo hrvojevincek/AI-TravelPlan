@@ -5,6 +5,7 @@ import SearchTitle from "./components/SearchTitle";
 import ProfileButton from "./components/ProfileButton";
 import { getServerSession } from "next-auth";
 import options from "./api/auth/[...nextauth]/options";
+import AskAIButton from "./components/AskAIButton"; // Add this import
 
 export default async function Home() {
   const session = await getServerSession(options);
@@ -37,6 +38,9 @@ export default async function Home() {
             <div className="mt-4">
               <SearchForm serverSession={session} />
             </div>
+
+            {/* Add the AskAI button here */}
+            {/* <div className="mt-4"> <AskAIButton /> </div> */}
           </div>
         </div>
         {/* {session && <UserCard user={session?.user} />} */}
