@@ -87,8 +87,6 @@ class MockGPTStrategy implements GPTClientStrategy {
         ? `, when choosing activities take into account I like ${preferences}`
         : "";
 
-    console.log("AVARILABLEs", destination, duration);
-
     const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
     the result should be formatted in this way:
     Day x:
@@ -169,7 +167,6 @@ class MockGPTStrategy implements GPTClientStrategy {
             client.uniqueActivities.push(activity["activity name"]);
           });
         });
-        console.log("prefResponseObject", prefResponseObject);
         return prefResponseObject;
       }
     }
@@ -244,7 +241,6 @@ class MockGPTStrategy implements GPTClientStrategy {
       client.uniqueActivities,
       activityNamesArray
     );
-    console.log("here");
 
     try {
       const prompt = `suggest me another activity, but IT MUST NOT BE any of this: ${client.uniqueActivities.toString()}. Make it in the same ${destination} with duration ${duration}, the times CAN NOT overlap with other durations that day. Response should be in stricly JSON format and only add answers where it says answer and it needs to have format stated inside the parenthesis, everything in the same line and dont forget DONT FORGET QUOTATION MARKS, BRACKETS!!! : [{"activity name": answer, "duration": answer(24 hour format-24 hour format), "address": answer}]`;
@@ -260,7 +256,6 @@ class MockGPTStrategy implements GPTClientStrategy {
           },
         ],
       });
-      console.log("response data bro", response);
       if (response.choices[0].message.content) {
         return response.choices[0].message.content;
       }
