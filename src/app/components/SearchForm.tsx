@@ -6,12 +6,13 @@ import SelectPreferences, { SelectOption } from "./SelectPreferences";
 import { useSession } from "next-auth/react";
 import { SearchData } from "@/types";
 import { options } from "@/utils/options";
+import { useRouter } from "next/navigation";
 
 function SearchForm({ serverSession }: { serverSession: any }) {
   const [searchData, setSearchData] = useState<SearchData>({});
   const { data: session } = useSession(serverSession);
   let actualsession = session?.user || serverSession?.user;
-  
+  const router = useRouter();
   const url =
     process.env.NODE_ENV === "development"
       ? `http://localhost:3000/result?destination=${
@@ -34,12 +35,16 @@ function SearchForm({ serverSession }: { serverSession: any }) {
     }));
   }
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    router.push(url);
+  }
+
   return (
     <form
       className="space-y-3"
       onSubmit={(e) => {
-        e.preventDefault();
-        document.location.href = url;
+        handleSubmit(e);
       }}
     >
       <div>

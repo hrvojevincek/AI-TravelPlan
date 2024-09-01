@@ -10,13 +10,14 @@ export async function GET(request: Request) {
   const preferences = searchParams.get("preferences");
   const searchId = searchParams.get("searchId");
 
-  if (searchId !== null) {
+  if (searchId) {
     const savedPlanById = await prisma.search.findUnique({
-      where: {
-        id: searchId,
-      },
+      where: { id: searchId },
     });
-    return NextResponse.json(JSON.parse(savedPlanById?.response as string));
+
+    if (savedPlanById?.response) {
+      return NextResponse.json(JSON.parse(savedPlanById.response));
+    }
   }
 
   // No search id but there's destination and duration
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
       return NextResponse.json(response);
     } catch (e) {
       const error = e as Error;
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message });
     }
   }
 }

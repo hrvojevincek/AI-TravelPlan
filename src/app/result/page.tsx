@@ -1,40 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ResultData, Activity } from "@/types";
-import Map from "../components/Map";
-import ExactLocation from "../components/ExactLocation";
-import ChangeMeBtn from "../components/ChangeMeBtn";
-import LoadingPage from "../loading";
+import { Activity, ResultData } from "@/types";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import ChangeMeBtn from "../components/ChangeMeBtn";
+import DetailsCard from "../components/DetailsCard";
+import ExactLocation from "../components/ExactLocation";
+import Map from "../components/Map";
 import SavePlanButton from "../components/SavePlanButton";
 import SavePlanModal from "../components/SavePlanModal";
-import getPlaceId from "@/utils/getPlaceId";
-import DetailsCard from "../components/DetailsCard";
+import LoadingPage from "../loading";
 
-import logo from "../../../public/logo.svg";
-import Image from "next/image";
-import { ButtonLink } from "../components/ButtonLink";
+import { fetchSearchResults, savePlan } from "@/utils/api";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { useJsApiLoader } from "@react-google-maps/api";
+import Image from "next/image";
 import Link from "next/link";
+import logo from "../../../public/logo.svg";
+import { ButtonLink } from "../components/ButtonLink";
 
 function ResultsPage() {
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResultData>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const { data: session } = useSession();
+
   const searchParams = useSearchParams();
-  const destination = searchParams.get("destination");
-  const duration = searchParams.get("duration");
-  const preferences = searchParams.get("preferences");
-  const searchId = searchParams.get("searchId");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { destination, duration, preferences, searchId } = Object.fromEntries(
+    searchParams.entries()
+  );
 
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<string>("");
   const [cardsInfo, setCardsInfo] = useState([]);
   const [selectedCardInfo, setSelectedCardInfo] = useState({});
+
   const onHandleSelectedActivity = (id: string) => {
     setSelectedActivity(id);
     const cardInfo = cardsInfo.find((el: any) => el.id === id);
@@ -51,54 +53,57 @@ function ResultsPage() {
   }, []);
 
   async function search() {
-    const url =
-      searchId === null
-        ? `/api/search?destination=${destination}&duration=${duration}${
-            preferences ? `&preferences=${preferences}` : ""
-          }`
-        : `/api/search?searchId=${searchId}`;
-    const result = await fetch(url, {
-      headers: { "Content-Type": "application/json" },
-    });
-    const responseData = (await result.json()) as ResultData;
+    const responseData = await fetchSearchResults(
+      destination,
+      duration,
+      preferences,
+      searchId
+    );
+    console.log("RESPONSE DATA", responseData);
+    console.log(
+      "RESPONSE kao activities DATA",
+      responseData.flatMap((day) => day)
+    );
     setResult(responseData);
+    setActivities(responseData.flatMap((day) => day));
     setLoading(false);
-    setActivities(responseData.flat());
   }
 
   if (loading || !isMapLoading) {
     return <LoadingPage />;
   }
 
+  // if (error || !result || result.length === 0) {
+  //   return (
+  //     <ErrorPage message={error || "No results found. Please try again."} />
+  //   );
+  // }
+
   async function handleSave(hasBeenChecked: boolean, update = false) {
     if (searchId !== null && isModalOpen === false) {
       setIsModalOpen(true);
       return;
     }
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    const raw = JSON.stringify({
-      email: session?.user?.email,
-      response: result,
-      hasBeenChecked,
-      update,
-      preferences: preferences?.split(", ") || [],
-    });
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-    };
-    const isSaved = await fetch(
-      `/api/search?destination=${destination}&duration=${duration}&searchId=${searchId}`,
-      requestOptions
-    );
-    const saved = await isSaved.json();
-    if (isSaved.status === 200) {
-      alert(saved.message);
-    }
-    if (isSaved.status === 201) {
-      setIsModalOpen(true);
+    try {
+      const saved = await savePlan(
+        session?.user?.email ?? undefined,
+        result,
+        hasBeenChecked,
+        update,
+        preferences?.split(", ") || [],
+        destination,
+        duration,
+        searchId
+      );
+      if (saved.status === 200) {
+        alert(saved.message);
+      }
+      if (saved.status === 201) {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error saving plan:", error);
+      alert("Error saving plan. Please try again.");
     }
   }
 
