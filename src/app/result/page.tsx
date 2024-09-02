@@ -4,21 +4,14 @@ import { Activity, ResultData } from "@/types";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import ChangeMeBtn from "../components/ChangeMeBtn";
 import DetailsCard from "../components/DetailsCard";
-import ExactLocation from "../components/ExactLocation";
 import Map from "../components/Map";
-import SavePlanButton from "../components/SavePlanButton";
 import SavePlanModal from "../components/SavePlanModal";
 import LoadingPage from "../loading";
 
 import { fetchSearchResults, savePlan } from "@/utils/api";
-import { ClockIcon } from "@heroicons/react/24/outline";
 import { useJsApiLoader } from "@react-google-maps/api";
-import Image from "next/image";
-import Link from "next/link";
-import logo from "../../../public/logo.svg";
-import { ButtonLink } from "../components/ButtonLink";
+import ActivityComponent from "../components/ActivityComponent";
 
 function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +102,7 @@ function ResultsPage() {
 
   return (
     <div className="flex h-screen w-screen">
-      <div
+      {/* <div
         className="relative overflow-auto p-6 bg-white shadow-md z-10"
         onClick={() => {
           setSelectedActivity("");
@@ -176,7 +169,18 @@ function ResultsPage() {
             </div>
           );
         })}
-      </div>
+      </div> */}
+      <ActivityComponent
+        duration={duration}
+        destination={destination}
+        result={result}
+        setSelectedActivity={setSelectedActivity}
+        selectedActivity={selectedActivity}
+        setActivities={setActivities}
+        setResult={setResult}
+        onHandleSelectedActivity={onHandleSelectedActivity}
+        handleSave={() => handleSave(false)}
+      />
       <div className=" flex-grow">
         {selectedActivity && (
           <DetailsCard

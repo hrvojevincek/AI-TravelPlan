@@ -18,7 +18,7 @@ export async function fetchSearchResults(
     throw new Error("Error fetching search results");
   }
   const result = (await response.json()) as ResultData;
-  console.log("REPSONES FOR API IS OK !", result);
+  console.log("REPSONES FOR ---API---->>>> !", result);
   return result;
 }
 

@@ -22,6 +22,7 @@ export async function GET(request: Request) {
 
   // No search id but there's destination and duration
   if (destination !== null && duration !== null) {
+    console.log("destination", destination);
     try {
       const response = await client.predict({
         destination,

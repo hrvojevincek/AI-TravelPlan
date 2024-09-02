@@ -87,33 +87,54 @@ class MockGPTStrategy implements GPTClientStrategy {
         ? `, when choosing activities take into account I like ${preferences}`
         : "";
 
-    const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
-    the result should be formatted in this way:
-    Day x:
-    ---
-    <Breakfast restaurant or bar>
-    <Breakfast time and duration>
-    <Breakfast address>
-    $$$
-    <Activity #1 name>
-    <Activity #1 time and duration>
-    <Activity #1 address>
-    $$$
-    <Lunch restaurant or bar>
-    <Lunch time and duration>
-    <Lunch address>
-    $$$
-    <Activity #2 name>
-    <Activity #2 time and duration>
-    <Activity #2 address>
-    $$$
-    <Dinner restaurant or bar>
-    <Dinner time and duration>
-    <Dinner address>
-    %%%
-    
-    Answer after the ampersands line
-    &&&&&&&`;
+    // const responsePrompt = `${duration} day trip to ${destination}${prefText}. Use "%%%" for delimiting days.
+    // the result should be formatted in this way:
+    // Day x:
+    // ---
+    // <Breakfast restaurant or bar>
+    // <Breakfast time and duration>
+    // <Breakfast address>
+    // $$$
+    // <Activity #1 name>
+    // <Activity #1 time and duration>
+    // <Activity #1 address>
+    // $$$
+    // <Lunch restaurant or bar>
+    // <Lunch time and duration>
+    // <Lunch address>
+    // $$$
+    // <Activity #2 name>
+    // <Activity #2 time and duration>
+    // <Activity #2 address>
+    // $$$
+    // <Dinner restaurant or bar>
+    // <Dinner time and duration>
+    // <Dinner address>
+    // %%%
+
+    // Answer after the ampersands line
+    // &&&&&&&`;
+
+    const prompt = `Please generate a detailed ${duration} day trip itinerary for ${destination}. Present the itinerary as a structured array of objects, where each object represents an activity or meal for the trip. Each day should typically include breakfast, 2-3 activities, lunch, 2-3 more activities, and dinner.
+Format the response as follows:
+1. An array of 10 activities per day
+2. Each activity should be an object with the following properties:
+   - activity name: A string describing the activity or meal
+   - address: The full address of the location
+   - duration: A string in the format "start time - duration"
+Here's an example of how each activity should be structured:
+{
+  "activity name": "Breakfast: The Breakfast Club",
+  "address": "33 D'Arblay St, Soho, London W1F 8EU",
+  "duration": "8:00 AM - 1 hour"
+}
+Please ensure that:
+1. The activities are varied and showcase the best of ${destination}
+2. The timings are realistic, allowing for travel between locations
+3. The addresses are accurate and specific
+4. The duration for each activity is appropriate
+Generate the full itinerary for all ${duration} days, maintaining this structure and format throughout. The response should be easily parseable as a JSON array of objects.
+`;
 
     //! IF WE SELECTED PREFERENCES
     if (preferences) {
@@ -197,38 +218,33 @@ class MockGPTStrategy implements GPTClientStrategy {
       model: "gpt-3.5-turbo",
       temperature: 1,
       max_tokens: 800,
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: responsePrompt,
-        },
-      ],
+      messages: [{ role: "user", content: prompt }],
     });
-
-    // ? choices[0].message.content
 
     //if (userInfo) connect to user table
     if (response.choices[0].message.content) {
-      const responseObject = client.parseChatGPT(
-        response.choices[0].message.content
+      // const responseObject = client.parseChatGPT(
+      //   response.choices[0].message.content
+      // );
+
+      // const savedSearch = await prisma.search.create({
+      //   data: {
+      //     duration: parseInt(duration),
+      //     destination: destination.toLowerCase(),
+      //     response: JSON.stringify(responseObject),
+      //     preferences: [],
+      //   },
+      // });
+      // responseObject.forEach((day: Activity[]) => {
+      //   day.forEach((activity: Activity) => {
+      //     client.uniqueActivities.push(activity["activity name"]);
+      //   });
+      // });
+      console.log(
+        "response GPTCLIENT.ts",
+        typeof response.choices[0].message.content
       );
-
-      const savedSearch = await prisma.search.create({
-        data: {
-          duration: parseInt(duration),
-          destination: destination.toLowerCase(),
-          response: JSON.stringify(responseObject),
-          preferences: [],
-        },
-      });
-      responseObject.forEach((day: Activity[]) => {
-        day.forEach((activity: Activity) => {
-          client.uniqueActivities.push(activity["activity name"]);
-        });
-      });
-
-      return responseObject;
+      return response.choices[0].message.content;
     }
   }
 
