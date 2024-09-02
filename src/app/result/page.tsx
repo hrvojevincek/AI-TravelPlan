@@ -123,7 +123,6 @@ function ResultsPage() {
         )}
 
         {result.length > 0 ? (
-          //pass event
           <Map
             setCardsInfo={setCardsInfo}
             destination={destination!}

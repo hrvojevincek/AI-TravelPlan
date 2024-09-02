@@ -166,22 +166,6 @@ const Map: React.FC<MapProps> = ({
           />
         );
       })}
-
-      {selectedMarker && (
-        <InfoWindow
-          options={{
-            pixelOffset: new window.google.maps.Size(0, -40),
-          }}
-          position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
-          onCloseClick={() => {
-            setSelectedMarker(undefined);
-          }}
-        >
-          <div>
-            <h2>{selectedMarker.id}</h2>
-          </div>
-        </InfoWindow>
-      )}
     </GoogleMap>
   );
 };
