@@ -3,7 +3,7 @@
 import { Activity, Day, ResultData } from "@/types";
 import Image from "next/image";
 import refresh from "../../../public/refresh.svg";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface ChangeMeBtnProps {
   duration: string;
@@ -16,7 +16,7 @@ interface ChangeMeBtnProps {
   setSelectedActivity: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
+const ChangeActivityBtn: React.FC<ChangeMeBtnProps> = ({
   setSelectedActivity,
   duration,
   destination,
@@ -26,6 +26,8 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
   result,
   setActivities,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   let places: string[] = [];
   result.forEach((day: Day) => {
     day.map((act: Activity) => {
@@ -66,6 +68,7 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
   }
 
   async function changeActivity() {
+    setIsLoading(true); // Start loading
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({ activityNamesArray: places });
@@ -79,17 +82,17 @@ const ChangeMeBtn: React.FC<ChangeMeBtnProps> = ({
     const responseData = await changeResult.json();
     const parsedData = JSON.parse(responseData);
     handleResultChange(parsedData[0]);
+    setIsLoading(false); // End loading
   }
 
   return (
-    <button className="mr-4 hover:fill-gray-400" onClick={changeActivity}>
-      <Image
-        className="hover:fill-black"
-        alt="Change it!"
-        src={refresh}
-      ></Image>
+    <button
+      className={`mr-4 hover:fill-gray-400 ${isLoading ? "animate-spin" : ""}`}
+      onClick={changeActivity}
+    >
+      <Image className="hover:fill-black" alt="Change it!" src={refresh} />
     </button>
   );
 };
 
-export default ChangeMeBtn;
+export default ChangeActivityBtn;

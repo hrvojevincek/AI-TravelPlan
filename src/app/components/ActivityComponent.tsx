@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import SavePlanButton from "./SavePlanButton";
 import { ButtonLink } from "./ButtonLink";
-import ChangeMeBtn from "./ChangeMeBtn";
+import ChangeActivityBtn from "./ChangeActivityBtn";
 import { ClockIcon } from "@heroicons/react/20/solid";
 import ExactLocation from "./ExactLocation";
 import logo from "../../../public/logo.svg";
@@ -44,7 +44,7 @@ const ActivityComponent: React.FC<ActivityProps> = ({
         setSelectedActivity("");
       }}
     >
-      <div className="flex justify-between w-full mb-10 ">
+      <div className="flex justify-between w-full mb-10">
         <Link href="/">
           <Image src={logo} alt="Best company ever"></Image>
         </Link>
@@ -69,7 +69,7 @@ const ActivityComponent: React.FC<ActivityProps> = ({
                     e.stopPropagation();
                     onHandleSelectedActivity(activity["activity name"]);
                   }}
-                  className={`flex justify-stretch border-2  p-4 rounded-md mb-4 max-w-sm cursor-pointer 
+                  className={`flex justify-stretch border-2 hover:border-zinc-400 p-4 rounded-md mb-4 max-w-sm cursor-pointer 
                 ${
                   activity["activity name"] === selectedActivity
                     ? "border-zinc-700"
@@ -77,7 +77,7 @@ const ActivityComponent: React.FC<ActivityProps> = ({
                 }`}
                   key={`result-${i}-day-${index}`}
                 >
-                  <ChangeMeBtn
+                  <ChangeActivityBtn
                     setSelectedActivity={setSelectedActivity}
                     setActivities={setActivities}
                     setResult={setResult}
