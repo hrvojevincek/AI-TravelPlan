@@ -7,7 +7,7 @@ export default async function getPlaceId(
   const apiUrl = name.map((activity) => {
     return `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       `${activity["activity name"]}${city ? `, ${city}` : ""}`
-    )}&inputtype=textquery&key=AIzaSyCCB6Ygzq1qrFozt9fOzQ-GjUBz6C_f9nk`;
+    )}&inputtype=textquery&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
   });
 
   const responses = await Promise.all(apiUrl.map((url) => fetch(url)));
