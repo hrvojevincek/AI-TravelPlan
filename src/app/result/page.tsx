@@ -9,7 +9,11 @@ import Map from "../components/Map";
 import SavePlanModal from "../components/SavePlanModal";
 import LoadingPage from "../loading";
 
-import { fetchSearchResults, savePlan } from "@/utils/api";
+import {
+  fetchSearchResults,
+  fetchSearchResultsGPT,
+  savePlan,
+} from "@/utils/api";
 import { useJsApiLoader } from "@react-google-maps/api";
 import ActivityComponent from "../components/ActivityComponent";
 import ErrorPage from "../components/ErrorPage";
@@ -47,15 +51,16 @@ function ResultsPage() {
   }, []);
 
   async function search() {
-    const responseData = await fetchSearchResults(
-      destination,
-      duration,
-      preferences,
-      searchId
-    );
-    console.log("RESPONSE DATA", responseData);
+    // const responseData = await fetchSearchResults(
+    //   destination,
+    //   duration,
+    //   preferences,
+    //   searchId
+    // );
+    const responseData = await fetchSearchResultsGPT(destination, duration);
+    console.log("RESPONSE DATA CLIENT", responseData);
     console.log(
-      "RESPONSE kao activities DATA",
+      "RESPONSE kao activities DATA CLIENT",
       responseData.flatMap((day) => day)
     );
     setResult(responseData);

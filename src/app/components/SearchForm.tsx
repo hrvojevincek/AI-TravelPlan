@@ -9,7 +9,11 @@ import { options } from "@/utils/options";
 import { useRouter } from "next/navigation";
 
 function SearchForm({ serverSession }: { serverSession: any }) {
-  const [searchData, setSearchData] = useState<SearchData>({});
+  const [searchData, setSearchData] = useState<SearchData>({
+    destination: "",
+    duration: "",
+    preferences: "",
+  });
   const { data: session } = useSession(serverSession);
   let actualsession = session?.user || serverSession?.user;
   const router = useRouter();
