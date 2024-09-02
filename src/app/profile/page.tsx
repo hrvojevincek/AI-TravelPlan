@@ -1,12 +1,12 @@
 import { getServerSession } from "next-auth/next";
-import Profile from "../components/profile";
+import ProfilePage from "../components/ProfilePage";
 import options from "../api/auth/[...nextauth]/options";
 
 export default async function profilePage() {
   const session = await getServerSession(options);
 
   return session ? (
-    <Profile
+    <ProfilePage
       user={session.user as { name: string; image: string; email: string }}
     />
   ) : (
