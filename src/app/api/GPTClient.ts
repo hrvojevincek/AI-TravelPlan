@@ -164,7 +164,7 @@ Generate the full itinerary for all ${duration} days, maintaining this structure
           { role: "system", content: "You are a helpful assistant." },
           {
             role: "user",
-            content: responsePrompt,
+            content: prompt,
           },
         ],
       });
