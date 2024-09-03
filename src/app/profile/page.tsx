@@ -1,17 +1,17 @@
-import { getServerSession } from "next-auth/next";
+import { getAuthSession } from "@/lib/auth";
 import ProfilePage from "../components/ProfilePage";
-import options from "../api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
 
-export default async function profilePage() {
-  const session = await getServerSession(options);
+export default async function page() {
+  const session = await getAuthSession();
 
-  return session ? (
+  if (!session) {
+    redirect("/google-signin");
+  }
+
+  return (
     <ProfilePage
       user={session.user as { name: string; image: string; email: string }}
     />
-  ) : (
-    <div className="flex h-screen w-screen content-center justify-center">
-      <h1>Loading Profile...</h1>
-    </div>
   );
 }

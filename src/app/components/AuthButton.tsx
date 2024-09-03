@@ -1,14 +1,9 @@
 "use client";
-import React from "react";
-import {
-  SessionContextValue,
-  signIn,
-  signOut,
-  useSession,
-} from "next-auth/react";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { usePopupCenter } from "@/lib/hooks/useAuthPopup";
-import { Session } from "next-auth";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const AuthButton = ({
   className,
@@ -20,7 +15,7 @@ const AuthButton = ({
 > & {
   session: { email: string; name: string; image: string } | undefined;
 }) => {
-  const popupCenter = usePopupCenter();
+  const router = useRouter();
 
   if (session) {
     return (
@@ -43,7 +38,7 @@ const AuthButton = ({
   return (
     <button
       type="button"
-      onClick={() => popupCenter("/google-signin", "Sample Sign In")}
+      onClick={() => router.push("/signin")}
       className={`${className}`}
       {...props}
     >

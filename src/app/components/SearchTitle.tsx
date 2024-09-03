@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 function SearchTitle({ serverSession }: { serverSession: any }) {
   const { data: session } = useSession();
   let actualsession = session?.user || serverSession?.user;
+
+  
   return actualsession ? (
     <h2 className="inline-block w-96 font-bold text-center text-5xl mb-10 text-white drop-shadow-xl">
       Hey{" "}

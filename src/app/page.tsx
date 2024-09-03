@@ -1,13 +1,12 @@
+import { getAuthSession } from "@/lib/auth";
 import Image from "next/image";
 import VoyagoLogo from "../../public/voyago-logo.svg";
+import ProfileButton from "./components/ProfileButton";
 import SearchForm from "./components/SearchForm";
 import SearchTitle from "./components/SearchTitle";
-import ProfileButton from "./components/ProfileButton";
-import { getServerSession } from "next-auth";
-import options from "./api/auth/[...nextauth]/options";
 
 export default async function Home() {
-  const session = await getServerSession(options);
+  const session = await getAuthSession();
   const image =
     "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80";
 

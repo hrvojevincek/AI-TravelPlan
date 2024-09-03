@@ -1,7 +1,8 @@
 import { findUserById, createUser } from "@/lib/db/user";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-const options = {
+export const options: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID as string,
@@ -26,5 +27,7 @@ const options = {
       }
     },
   },
+  pages: {
+    signIn: "/signin",
+  },
 };
-export default options;
