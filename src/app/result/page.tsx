@@ -97,19 +97,21 @@ function ResultsPage() {
   }
 
   return (
-    <div className="flex h-screen w-screen">
-      <ActivityComponent
-        duration={duration}
-        destination={destination}
-        result={result}
-        setSelectedActivity={setSelectedActivity}
-        selectedActivity={selectedActivity}
-        setActivities={setActivities}
-        setResult={setResult}
-        onHandleSelectedActivity={onHandleSelectedActivity}
-        handleSave={() => handleSave(false)}
-      />
-      <div className=" flex-grow">
+    <div className="flex flex-col h-screen w-screen sm:flex-row">
+      <div className="h-1/2 sm:h-screen sm:w-1/3 overflow-y-auto mb-4 sm:mb-0">
+        <ActivityComponent
+          duration={duration}
+          destination={destination}
+          result={result}
+          setSelectedActivity={setSelectedActivity}
+          selectedActivity={selectedActivity}
+          setActivities={setActivities}
+          setResult={setResult}
+          onHandleSelectedActivity={onHandleSelectedActivity}
+          handleSave={() => handleSave(false)}
+        />
+      </div>
+      <div className="h-1/2 sm:h-screen sm:w-2/3 flex flex-col">
         {selectedActivity && (
           <DetailsCard
             cardInfo={selectedCardInfo}
@@ -118,13 +120,15 @@ function ResultsPage() {
         )}
 
         {result.length > 0 ? (
-          <Map
-            setCardsInfo={setCardsInfo}
-            destination={destination!}
-            activities={activities}
-            selectedActivity={selectedActivity}
-            handleSelectActivity={onHandleSelectedActivity}
-          />
+          <div className="flex-grow">
+            <Map
+              setCardsInfo={setCardsInfo}
+              destination={destination!}
+              activities={activities}
+              selectedActivity={selectedActivity}
+              handleSelectActivity={onHandleSelectedActivity}
+            />
+          </div>
         ) : (
           <div />
         )}
