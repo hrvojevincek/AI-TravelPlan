@@ -44,11 +44,11 @@ const ActivityComponent: React.FC<ActivityProps> = ({
         setSelectedActivity("");
       }}
     >
-      <div className="flex justify-between w-full mb-10">
+      <div className="w-full mb-10 flex justify-between items-center">
         <Link href="/">
-          <Image src={logo} alt="Best company ever"></Image>
+          <Image src={logo} alt="Best company ever" />
         </Link>
-        <div>
+        <div className="mt-4 sm:mt-0 flex items-center">
           <SavePlanButton handleSave={handleSave} />
           <ButtonLink className="ml-2" href="/profile">
             Profile
