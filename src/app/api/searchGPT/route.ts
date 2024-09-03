@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     Format the response as follows:
     1. An array of 5 to 8 activities per day
     Here's an example of how each activity should be structured, and its very important that it is in this format:
+    
         {
         "activity name": "Breakfast: The Breakfast Club",
         "address": "33 D'Arblay St, Soho, London W1F 8EU",
