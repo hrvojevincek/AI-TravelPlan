@@ -72,36 +72,11 @@ export async function fetchSearchResultsGPT(
   if (!response.ok) {
     throw new Error("Error fetching search results from GPT");
   }
-  // const result = (await response.json()) as ResultData;
 
   const responseText = await response.json();
 
   console.log("RESPONSE FROM ---API GPT---->>>> !", typeof responseText);
   console.log("response TEXT from API", responseText);
 
-  const paredResponse = parseChatGPT(responseText);
-
-  console.log("PARSED RESPONSE", paredResponse);
-  return paredResponse;
-}
-
-function parseChatGPT(result: string) {
-  return result
-    .split("&&&&&&&")
-    .filter((a) => a.trim())
-    .map((day) => {
-      const activities = day.split("%%%").filter((a) => a.trim());
-      return activities.slice(1).map((activity) => {
-        const lines = activity
-          .split("\n")
-          .map((line) => line.trim())
-          .filter((line) => line);
-        const [name, duration, address] = lines;
-        return {
-          "activity name": name,
-          duration: duration,
-          address: address,
-        };
-      });
-    });
+  return responseText;
 }

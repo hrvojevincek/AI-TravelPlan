@@ -12,6 +12,7 @@ export default async function getPlaceId(
 
   const responses = await Promise.all(apiUrl.map((url) => fetch(url)));
   const datas = await Promise.all(responses.map((res) => res.json()));
+
   const results = datas.map((data) => {
     const id = data.results[0].place_id;
     const { lat, lng } = data.results[0].geometry.location;
@@ -21,6 +22,7 @@ export default async function getPlaceId(
   const editorialResponses = await Promise.all(
     results.map((result) => fetch(`/api/places?placeId=${result.id}`))
   );
+  
   const editorials = await Promise.all(
     editorialResponses.map((editorialres) => editorialres.json())
   );

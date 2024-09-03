@@ -52,7 +52,11 @@ function ResultsPage() {
 
   async function search() {
     const responseData = await fetchSearchResultsGPT(destination, duration);
-    console.log("RESPONSE DATA CLIENT", responseData);
+
+    // const parsedData = JSON.parse(responseData);
+
+    console.log("RESPONSE DATA CLIENT", typeof responseData);
+
     setResult(responseData);
     setActivities(responseData.flatMap((day) => day));
     setLoading(false);
