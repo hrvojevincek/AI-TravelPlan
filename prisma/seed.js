@@ -2,6 +2,9 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
+  const deleteAllSearches = await prisma.search.deleteMany();
+  console.log("DELETED ALL SEARCHES", deleteAllSearches);
+
   const searches = await prisma.search.createMany({
     data: [
       {
@@ -257,7 +260,7 @@ async function main() {
       },
     ],
   });
-  console.log(searches);
+  console.log("SEEDED SEARCHES", searches);
 }
 
 main()

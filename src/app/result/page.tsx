@@ -9,11 +9,7 @@ import Map from "../components/Map";
 import SavePlanModal from "../components/SavePlanModal";
 import LoadingPage from "../loading";
 
-import {
-  fetchSearchResults,
-  fetchSearchResultsGPT,
-  savePlan,
-} from "@/utils/api";
+import { fetchSearchResultsGPT, savePlan } from "@/utils/api";
 import { useJsApiLoader } from "@react-google-maps/api";
 import ActivityComponent from "../components/ActivityComponent";
 import ErrorPage from "../components/ErrorPage";

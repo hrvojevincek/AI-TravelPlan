@@ -1,4 +1,5 @@
 import { ResultData } from "@/types";
+import { GPTparser } from "./GPTparser";
 
 export async function fetchSearchResults(
   destination: string,
@@ -66,17 +67,19 @@ export async function fetchSearchResultsGPT(
   duration: string
 ): Promise<ResultData> {
   const url = `/api/searchGPT?destination=${destination}&duration=${duration}`;
+
   const response = await fetch(url, {
     headers: { "Content-Type": "application/json" },
   });
   if (!response.ok) {
     throw new Error("Error fetching search results from GPT");
   }
-
   const responseText = await response.json();
 
   console.log("RESPONSE FROM ---API GPT---->>>> !", typeof responseText);
   console.log("response TEXT from API", responseText);
 
-  return responseText;
+  const parsedData = JSON.parse(responseText);
+
+  return parsedData as ResultData;
 }

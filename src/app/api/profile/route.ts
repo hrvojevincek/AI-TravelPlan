@@ -1,4 +1,4 @@
-import { getUserSearches } from "@/db/user";
+import { getUserSearches } from "@/lib/db/user";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {

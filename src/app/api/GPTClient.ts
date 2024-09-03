@@ -1,11 +1,11 @@
 import { Activity, ResultData, ResultEdit } from "@/types";
-import prisma from "../../db/db";
+import prisma from "@/lib/db/db";
 import { openAIClient } from "@/lib/openai";
 import {
   findSearchWithPreferences,
   createSearch,
   findSearchWithoutPreferences,
-} from "@/db/search";
+} from "@/lib/db/search";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -223,19 +223,19 @@ class MockGPTStrategy implements GPTClientStrategy {
         response.choices[0].message.content
       );
 
-      // const savedSearch = await prisma.search.create({
-      //   data: {
-      //     duration: parseInt(duration),
-      //     destination: destination.toLowerCase(),
-      //     response: JSON.stringify(responseObject),
-      //     preferences: [],
-      //   },
-      // });
-      // responseObject.forEach((day: Activity[]) => {
-      //   day.forEach((activity: Activity) => {
-      //     client.uniqueActivities.push(activity["activity name"]);
-      //   });
-      // });
+      const savedSearch = await prisma.search.create({
+        data: {
+          duration: parseInt(duration),
+          destination: destination.toLowerCase(),
+          response: JSON.stringify(responseObject),
+          preferences: [],
+        },
+      });
+      responseObject.forEach((day: Activity[]) => {
+        day.forEach((activity: Activity) => {
+          client.uniqueActivities.push(activity["activity name"]);
+        });
+      });
       console.log(
         "response GPTCLIENT.ts",
         typeof response.choices[0].message.content

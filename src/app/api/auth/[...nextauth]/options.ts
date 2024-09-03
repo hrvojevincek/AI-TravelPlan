@@ -1,4 +1,4 @@
-import { findUserById, createUser } from "@/db/user";
+import { findUserById, createUser } from "@/lib/db/user";
 import GoogleProvider from "next-auth/providers/google";
 
 const options = {

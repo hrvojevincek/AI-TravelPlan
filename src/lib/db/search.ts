@@ -1,19 +1,5 @@
 import prisma from "./db";
 
-export async function findSearchWithPreferences(
-  destination: string,
-  duration: number,
-  preferences: string[]
-) {
-  return await prisma.search.findFirst({
-    where: {
-      destination: destination.toLowerCase(),
-      duration: duration,
-      preferences: { equals: preferences.sort() },
-    },
-  });
-}
-
 export async function createSearch(
   destination: string,
   duration: number,
@@ -30,6 +16,20 @@ export async function createSearch(
   });
 }
 
+export async function findSearchWithPreferences(
+  destination: string,
+  duration: number,
+  preferences: string[]
+) {
+  return await prisma.search.findFirst({
+    where: {
+      destination: destination.toLowerCase(),
+      duration: duration,
+      preferences: { equals: preferences.sort() },
+    },
+  });
+}
+
 export async function findSearchWithoutPreferences(
   destination: string,
   duration: number
@@ -38,9 +38,6 @@ export async function findSearchWithoutPreferences(
     where: {
       destination: destination.toLowerCase(),
       duration: duration,
-      preferences: {
-        isEmpty: true,
-      },
     },
   });
 }
