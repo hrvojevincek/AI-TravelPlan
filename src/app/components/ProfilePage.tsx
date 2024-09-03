@@ -4,6 +4,7 @@ import ArrowRightIcon from "@heroicons/react/24/outline/ArrowRightOnRectangleIco
 import UserIcon from "@heroicons/react/24/outline/UserIcon";
 import BookmarkIcon from "@heroicons/react/24/outline/BookmarkIcon";
 import SettingsIcon from "@heroicons/react/24/outline/CogIcon";
+import prisma from "@/lib/db/db";
 
 async function ProfilePage({
   user,

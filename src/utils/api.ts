@@ -66,20 +66,22 @@ export async function fetchSearchResultsGPT(
   destination: string,
   duration: string
 ): Promise<ResultData> {
-  const url = `/api/searchGPT?destination=${destination}&duration=${duration}`;
+  try {
+    const url = `/api/searchGPT?destination=${destination}&duration=${duration}`;
 
-  const response = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!response.ok) {
-    throw new Error("Error fetching search results from GPT");
+    const response = await fetch(url, {
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const responseText = await response.json();
+
+    const parsedData = JSON.parse(responseText);
+
+    return parsedData as ResultData;
+  } catch (error) {
+    console.error("Error fetching search results from GPT:", error);
+    throw new Error("Failed to fetch search results from GPT");
   }
-  const responseText = await response.json();
-
-  console.log("RESPONSE FROM ---API GPT---->>>> !", typeof responseText);
-  console.log("response TEXT from API", responseText);
-
-  const parsedData = JSON.parse(responseText);
-
-  return parsedData as ResultData;
 }
