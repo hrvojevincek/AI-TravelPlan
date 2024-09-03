@@ -77,7 +77,9 @@ function SearchForm({ serverSession }: { serverSession: any }) {
             value={searchData.duration}
             id="duration"
             name="duration"
-            type="text"
+            type="number"
+            min="2"
+            max="4"
             placeholder="How many days for?"
             required
             className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100 placeholder-icon-time"

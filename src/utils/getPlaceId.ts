@@ -22,7 +22,7 @@ export default async function getPlaceId(
   const editorialResponses = await Promise.all(
     results.map((result) => fetch(`/api/places?placeId=${result.id}`))
   );
-  
+
   const editorials = await Promise.all(
     editorialResponses.map((editorialres) => editorialres.json())
   );

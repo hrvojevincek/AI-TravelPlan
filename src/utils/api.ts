@@ -1,5 +1,4 @@
 import { ResultData } from "@/types";
-import { GPTparser } from "./GPTparser";
 
 export async function fetchSearchResults(
   destination: string,
