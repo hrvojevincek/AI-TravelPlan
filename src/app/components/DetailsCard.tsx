@@ -1,4 +1,8 @@
-import { PhotoIcon } from "@heroicons/react/20/solid";
+import {
+  PhotoIcon,
+  ArrowTopRightOnSquareIcon,
+} from "@heroicons/react/20/solid";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -8,19 +12,40 @@ type DetailProp = {
 };
 
 const DetailsCard: React.FC<DetailProp> = ({ cardInfo, selectedActivity }) => {
+  const openGoogleMaps = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const url = cardInfo?.result?.url || "";
+    window.open(
+      url,
+      "GoogleMaps",
+      "width=750,height=750,resizable=yes,scrollbars=yes"
+    );
+  };
+
   return (
     <div className="z-10 absolute right-20 bottom-20">
       <Link
         href={cardInfo?.result ? cardInfo.result.url : ""}
         target="_blank"
-        className="flex flex-col items-center border rounded-lg shadow md:flex-row md:items-start md:max-w-xl  bg-zinc-50 p-4"
+        onClick={openGoogleMaps}
+        className="flex border rounded-lg shadow items-start max-w-xl bg-zinc-50 p-2 relative"
       >
         {renderImage(cardInfo)}
-        <div className="flex flex-col justify-between p-3 leading-normal">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-black">
+        <div className="flex flex-col justify-between p-2 leading-normal">
+          <h5 className="text-2xl font-bold tracking-tight text-black">
             {selectedActivity}
           </h5>
           {renderDescription(cardInfo)}
+          <div className="absolute bottom-2 right-4">
+            <Link
+              href={cardInfo?.result ? cardInfo.result.url : ""}
+              target="_blank"
+              className="flex items-center text-xs text-slate-400 hover:text-yellow-500 transition-colors duration-200"
+            >
+              <span className="mr-1">Open in Google Maps</span>
+              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </Link>
     </div>
@@ -30,9 +55,12 @@ const DetailsCard: React.FC<DetailProp> = ({ cardInfo, selectedActivity }) => {
 const renderImage = (cardInfo: any) => {
   if (cardInfo && cardInfo.result && cardInfo.result.photos) {
     return (
-      <img
-        className="m-3 object-cover w-full rounded-lg h-96 md:h-auto md:w-48"
+      <Image
+        className="m-2 object-cover rounded-lg md:h-auto md:w-48"
         alt=""
+        width={150}
+        height={150}
+        quality={100}
         src={
           cardInfo.result.photos
             ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${
@@ -45,7 +73,7 @@ const renderImage = (cardInfo: any) => {
   }
 
   return (
-    <div className="m-3 w-32 bg-slate-300 aspect-square flex justify-center items-center rounded-md">
+    <div className="w-32 bg-slate-300 aspect-square flex justify-center items-center rounded-md">
       <PhotoIcon className="w-8 h-8 text-slate-400" />
     </div>
   );

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
   const responsePrompt = `Please generate a detailed ${duration} day trip itinerary for ${destination}. 
   The itinerary should be structured as an array where each sub-array represents one day of activities.
-   Each day should typically include breakfast, 2-3 activities, lunch, 2-3 more activities, 
+   Each day should typically include breakfast, 2 activities, lunch, 2 more activities, 
   and dinner.
   It should be structured as an object with the following properties:
   - activity name: A string describing the activity or meal
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
 
  
     Format the response as follows:
-    1. An array of 5 to 8 activities per day
+    1. An array of 6 activities per day
     Here's an example of how each activity should be structured, and its very important that it is in this format:
 
         {

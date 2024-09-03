@@ -1,4 +1,3 @@
-import { unsplashLoader } from "@/lib/unsplash/unsplash-loader";
 import Image from "next/image";
 
 interface CardProps {
@@ -21,7 +20,6 @@ const Card: React.FC<CardProps> = ({
             <Image
               className="object-cover t-0 l-0 w-full h-full rounded-xl"
               src={backgroundImage}
-              // loader={unsplashLoader}
               alt="background"
               fill
             />

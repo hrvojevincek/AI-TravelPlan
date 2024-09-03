@@ -1,18 +1,17 @@
 "use client";
 
 import { Activity, ResultData } from "@/types";
+import { fetchSearchResultsGPT, savePlan } from "@/utils/api";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import ActivityComponent from "../components/ActivityComponent";
 import DetailsCard from "../components/DetailsCard";
+import ErrorPage from "../components/ErrorPage";
 import Map from "../components/Map";
 import SavePlanModal from "../components/SavePlanModal";
-import LoadingPage from "../loading";
-
-import { fetchSearchResultsGPT, savePlan } from "@/utils/api";
+import LoadingImage from "../components/LoadingImage";
 import { useJsApiLoader } from "@react-google-maps/api";
-import ActivityComponent from "../components/ActivityComponent";
-import ErrorPage from "../components/ErrorPage";
 
 function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
@@ -47,19 +46,20 @@ function ResultsPage() {
   }, []);
 
   async function search() {
-    const responseData = await fetchSearchResultsGPT(destination, duration);
-
-    // const parsedData = JSON.parse(responseData);
-
-    console.log("RESPONSE DATA CLIENT", typeof responseData);
-
-    setResult(responseData);
-    setActivities(responseData.flatMap((day) => day));
-    setLoading(false);
+    setLoading(true);
+    try {
+      const responseData = await fetchSearchResultsGPT(destination, duration);
+      setResult(responseData);
+      setActivities(responseData.flatMap((day) => day));
+    } catch (error) {
+      setError("An error occurred while fetching results.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  if (loading || !isMapLoading) {
-    return <LoadingPage />;
+  if (loading) {
+    return <LoadingImage destination={destination} duration={duration} />;
   }
 
   if (error || !result || result.length === 0) {

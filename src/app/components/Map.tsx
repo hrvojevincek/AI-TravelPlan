@@ -1,6 +1,6 @@
 import type { Activity } from "@/types";
 import getPlaceId from "@/utils/getPlaceId";
-import { GoogleMap, InfoWindow, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const library = "places";

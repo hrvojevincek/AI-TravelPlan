@@ -20,8 +20,6 @@ const AuthButton = ({
   if (session) {
     return (
       <>
-        {/* <div className="flex gap-4"> */}
-        {/* <p className="text-sky-600">{session.user.name}</p> */}
         <button
           type="button"
           onClick={() => signOut()}
@@ -31,7 +29,6 @@ const AuthButton = ({
           <ArrowRightOnRectangleIcon className="inline w-4 h-4 mr-1" />
           <span>Sign Out</span>
         </button>
-        {/* </div> */}
       </>
     );
   }

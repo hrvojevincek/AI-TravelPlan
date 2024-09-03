@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
 import { usePopupCenter } from "@/lib/hooks/useAuthPopup";
+import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
+import { useSession } from "next-auth/react";
 
 function SavePlanButton({
   handleSave,
@@ -13,7 +12,7 @@ function SavePlanButton({
 
   const callback = session?.user
     ? () => handleSave(true)
-    : () => popupCenter("/google-signin", "Sample Sign In");
+    : () => popupCenter("/signin", "Sign In");
   return (
     <button
       onClick={callback}
