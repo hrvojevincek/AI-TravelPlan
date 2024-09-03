@@ -1,14 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../lib/db";
+import { getUserSearches } from "@/db/user";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const req = await request.json();
   const { email } = req;
-  const plans = await prisma.search.findMany({
-    where: {
-      user: { email: email },
-    },
-  });
+  const plans = await getUserSearches(email);
   console.log(plans);
   return NextResponse.json(plans);
 }

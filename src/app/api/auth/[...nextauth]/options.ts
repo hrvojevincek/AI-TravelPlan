@@ -1,4 +1,4 @@
-import prisma from "../../../../lib/db";
+import { findUserById, createUser } from "@/db/user";
 import GoogleProvider from "next-auth/providers/google";
 
 const options = {
@@ -11,22 +11,12 @@ const options = {
   callbacks: {
     async signIn({ user, account, profile, email, credentials }: any) {
       try {
-        const oldUser = await prisma.user.findUnique({
-          where: {
-            id: user.id,
-          },
-        });
+        const oldUser = await findUserById(user.id);
         if (oldUser) {
           return true;
         }
         if (user.id && user.name && user.email) {
-          const newUser = await prisma.user.create({
-            data: {
-              id: user.id,
-              username: user.name,
-              email: user.email,
-            },
-          });
+          const newUser = await createUser(user.id, user.name, user.email);
           return true;
         }
         return false;

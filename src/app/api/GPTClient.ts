@@ -1,6 +1,11 @@
 import { Activity, ResultData, ResultEdit } from "@/types";
-import prisma from "../../lib/db";
+import prisma from "../../db/db";
 import { openAIClient } from "@/lib/openai";
+import {
+  findSearchWithPreferences,
+  createSearch,
+  findSearchWithoutPreferences,
+} from "@/db/search";
 
 type GPTClientStrategy = {
   predict: (props: searchProps) => Promise<ResultData>;
@@ -138,13 +143,11 @@ class MockGPTStrategy implements GPTClientStrategy {
 
     //! IF WE SELECTED PREFERENCES
     if (preferences) {
-      const savedPrefSearch = await prisma.search.findFirst({
-        where: {
-          destination: destination.toLowerCase(),
-          duration: parseInt(duration),
-          preferences: { equals: preferences?.split(", ").sort() },
-        },
-      });
+      const savedPrefSearch = await findSearchWithPreferences(
+        destination,
+        parseInt(duration),
+        preferences.split(", ")
+      );
 
       if (savedPrefSearch) {
         const parsedPrefSearch = JSON.parse(savedPrefSearch.response);
@@ -174,14 +177,12 @@ class MockGPTStrategy implements GPTClientStrategy {
           prefResponse.choices[0].message.content
         );
 
-        const newPrefSearch = await prisma.search.create({
-          data: {
-            destination: destination.toLowerCase(),
-            duration: parseInt(duration),
-            response: JSON.stringify(prefResponseObject),
-            preferences: preferences?.split(", ").sort(),
-          },
-        });
+        const newPrefSearch = await createSearch(
+          destination,
+          parseInt(duration),
+          JSON.stringify(prefResponseObject),
+          preferences.split(", ")
+        );
 
         prefResponseObject.forEach((day: Activity[]) => {
           day.forEach((activity: Activity) => {
@@ -192,15 +193,10 @@ class MockGPTStrategy implements GPTClientStrategy {
       }
     }
     //! IF ITS IN DB
-    const search = await prisma.search.findFirst({
-      where: {
-        destination: destination.toLowerCase(),
-        duration: parseInt(duration),
-        preferences: {
-          isEmpty: true,
-        },
-      },
-    });
+    const search = await findSearchWithoutPreferences(
+      destination,
+      parseInt(duration)
+    );
 
     if (search?.response) {
       const data = JSON.parse(search?.response);

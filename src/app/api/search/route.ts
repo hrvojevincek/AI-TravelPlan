@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "../GPTClient";
-import prisma from "../../../lib/db";
+import prisma from "../../../db/db";
 import * as Unsplash from "@/lib/unsplash/unsplash";
 
 export async function GET(request: Request) {

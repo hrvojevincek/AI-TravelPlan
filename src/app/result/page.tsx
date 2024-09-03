@@ -51,18 +51,8 @@ function ResultsPage() {
   }, []);
 
   async function search() {
-    // const responseData = await fetchSearchResults(
-    //   destination,
-    //   duration,
-    //   preferences,
-    //   searchId
-    // );
     const responseData = await fetchSearchResultsGPT(destination, duration);
     console.log("RESPONSE DATA CLIENT", responseData);
-    console.log(
-      "RESPONSE kao activities DATA CLIENT",
-      responseData.flatMap((day) => day)
-    );
     setResult(responseData);
     setActivities(responseData.flatMap((day) => day));
     setLoading(false);

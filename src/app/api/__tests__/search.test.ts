@@ -5,7 +5,7 @@ jest.mock("../../../lib/openai");
 import openai from "@/lib/openai";
 
 import { GET } from "../search/route";
-import prisma from "@/lib/db";
+import prisma from "@/db/db";
 
 const mockResponse = {};
 const fakeGPTResponse = `Day 1:
