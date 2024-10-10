@@ -62,7 +62,7 @@ function SearchForm({ serverSession }: { serverSession: any }) {
             name="destination"
             type="text"
             required
-            placeholder="Where do you want to go?"
+            placeholder="Where do you want to go? Enter a city name."
             className="w-96 text-center rounded-full py-2 px-4 bg-opacity-70 bg-neutral-100 placeholder-icon-time"
           />
         </div>

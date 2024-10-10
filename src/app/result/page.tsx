@@ -3,7 +3,7 @@
 import { Activity, ResultData } from "@/types";
 import { fetchSearchResultsGPT, savePlan } from "@/utils/api";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ActivityComponent from "../components/ActivityComponent";
 import DetailsCard from "../components/DetailsCard";
@@ -12,6 +12,7 @@ import Map from "../components/Map";
 import SavePlanModal from "../components/SavePlanModal";
 import LoadingImage from "../components/LoadingImage";
 import { useJsApiLoader } from "@react-google-maps/api";
+import Link from "next/link";
 
 function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +20,7 @@ function ResultsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const { data: session } = useSession();
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const { destination, duration, preferences, searchId } = Object.fromEntries(
@@ -52,7 +54,9 @@ function ResultsPage() {
       setResult(responseData);
       setActivities(responseData.flatMap((day) => day));
     } catch (error) {
-      setError("An error occurred while fetching results.");
+      setError(
+        "An error occurred while fetching results. Please ensure you've entered a valid city name."
+      );
     } finally {
       setLoading(false);
     }
@@ -64,7 +68,18 @@ function ResultsPage() {
 
   if (error || !result || result.length === 0) {
     return (
-      <ErrorPage message={error || "No results found. Please try again."} />
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <h2 className="text-2xl font-bold mb-4 text-red-600">Error</h2>
+          <p className="mb-6">
+            {error ||
+              "No results found. Please ensure you've entered a valid city name."}
+          </p>
+          <Link href="/" className="text-black font-bold py-2 px-4 rounded">
+            Return to Homepage
+          </Link>
+        </div>
+      </div>
     );
   }
 

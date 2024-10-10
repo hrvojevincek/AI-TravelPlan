@@ -14,13 +14,15 @@ function SavePlanButton({
     ? () => handleSave(true)
     : () => popupCenter("/signin", "Sign In");
   return (
-    <button
-      onClick={callback}
-      className="bg-yellow-500 text-white rounded-full p-1 px-6 shadow-md"
-    >
-      <ArrowDownTrayIcon className="inline-block w-4 h-4 mr-1 mb-1" />
-      Save
-    </button>
+    <div className="flex items-center">
+      <button
+        onClick={callback}
+        className="bg-yellow-500 text-white rounded-full p-1 px-6 shadow-md flex items-center"
+      >
+        <ArrowDownTrayIcon className="inline-block w-4 h-4 mr-1 mb-1" />
+        <div>Save</div>
+      </button>
+    </div>
   );
 }
 
